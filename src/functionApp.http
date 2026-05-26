@@ -1,0 +1,56 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+@host = http://localhost:7134
+@localdockerhost=http://localhost:8080
+@dockerHost =https://functionappcontainerv1.delightfulflower-f177dfaf.australiaeast.azurecontainerapps.io
+GET {{host}}/api/constructixHttpExample
+###
+GET {{host}}/api/GetCustomers
+###
+# Get Suppliers
+GET {{host}}/api/GetSuppliers
+###
+GET {{host}}/api/merchants
+###
+# Get GetReceiveOrdersQueue Name
+GET {{host}}/api/getqueuename
+
+### Local docker host
+GET {{host}}/api/getcustomers
+###
+GET {{host}}/api/GetQueueName
+
+###
+GET {{host}}/api/products
+
+###
+GET {{host}}/api/quotations
+###
+POST {{host}}/api/newQuotation
+contenttype: application/json
+
+  {
+    "id": "ADAX",
+    "Created": "2026-05-09T23:05:54.7353666+00:00",
+    "Customer": {
+      "Name": "Customer Z"
+    }
+  }
+
+
+###
+
+GET {{dockerHost}}/api/constructixHttpExample
+###
+# Get GetReceiveOrdersQueue Name
+GET {{dockerHost}}/api/GetCustomers
+###
+# Get GetReceiveOrdersQueue Name
+GET {{dockerHost}}/api/GetSuppliers
+###
+GET {{dockerHost}}/api/GetQueueName
+###
+GET {{dockerHost}}/api/Products
+###
+GET {{dockerHost}}/api/quotations
+###
+GET {{dockerHost}}/api/merchants
