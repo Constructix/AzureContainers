@@ -1,0 +1,294 @@
+{
+  "info": {
+    "_postman_id": "0d31618c-5d58-4f69-8f4a-f4fc0311abec",
+    "name": "Azure Containers",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "614129"
+  },
+  "item": [
+    {
+      "name": "Localhost",
+      "item": [
+        {
+          "name": "GetSuppliersFromLocal",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{Localhost}}/api/GetSuppliers",
+              "host": [
+                "{{Localhost}}"
+              ],
+              "path": [
+                "api",
+                "GetSuppliers"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GetQueueName",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{AzureContainer}}/api/GetQueueName",
+              "host": [
+                "{{AzureContainer}}"
+              ],
+              "path": [
+                "api",
+                "GetQueueName"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Quotation",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "ServiceBusFunctionsInContainers",
+      "item": [
+        {
+          "name": "Localhost",
+          "item": [
+            {
+              "name": "SubmitNewOrderToServiceBusQueue",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"Customer\": {\r\n        \"firstName\":\"Richard\",\r\n        \"lastName\":\"Jones\"\r\n    }\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:7134/api/NewOrder",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "7134",
+                  "path": [
+                    "api",
+                    "NewOrder"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "SubmitNewOrderToServiceBusQueue Copy",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest(\"https://api.ipify.org?format=json\", (err, res) => {\r",
+                  "    if (!err) {\r",
+                  "        const ip = res.json().ip;\r",
+                  "        pm.environment.set(\"clientIP\", ip);\r",
+                  "        console.log(\"Client IP:\", ip);\r",
+                  "    }\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-Forwarded-For",
+                "value": "{{clientIP}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"Customer\": {\r\n        \"firstName\":\"Richard\",\r\n        \"lastName\":\"Jones\",\r\n        \"Message\": \"2nd attempt - Sending message via Azure Function which has been deployed. \"\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{AzureContainer}}/api/NewOrder",
+              "host": [
+                "{{AzureContainer}}"
+              ],
+              "path": [
+                "api",
+                "NewOrder"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "GetSuppliers",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{AzureContainer}}/api/getsuppliers",
+          "host": [
+            "{{AzureContainer}}"
+          ],
+          "path": [
+            "api",
+            "getsuppliers"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "constructixHttpExample",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{AzureContainer}}/api/getsuppliers",
+          "host": [
+            "{{AzureContainer}}"
+          ],
+          "path": [
+            "api",
+            "getsuppliers"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetCustomers",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{AzureContainer}}/api/getcustomers",
+          "host": [
+            "{{AzureContainer}}"
+          ],
+          "path": [
+            "api",
+            "getcustomers"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetQueueName",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{AzureContainer}}/api/getqueueName",
+          "host": [
+            "{{AzureContainer}}"
+          ],
+          "path": [
+            "api",
+            "getqueueName"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetProducts",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{AzureContainer}}/api/products",
+          "host": [
+            "{{AzureContainer}}"
+          ],
+          "path": [
+            "api",
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetQuotations",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{AzureContainer}}/api/quotations",
+          "host": [
+            "{{AzureContainer}}"
+          ],
+          "path": [
+            "api",
+            "quotations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "GetQuotations Copy",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{AzureContainer}}/api/quotations",
+          "host": [
+            "{{AzureContainer}}"
+          ],
+          "path": [
+            "api",
+            "quotations"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add Quotations",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{AzureContainer}}/api/quotations",
+          "host": [
+            "{{AzureContainer}}"
+          ],
+          "path": [
+            "api",
+            "quotations"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

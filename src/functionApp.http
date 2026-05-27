@@ -11,6 +11,15 @@ GET {{host}}/api/GetSuppliers
 ###
 GET {{host}}/api/merchants
 ###
+### Send to Sevice bus
+POST {{host}}/api/NewOrder
+contenttype: application/json
+  {
+    "Customer": {
+      "firstName":"Richard",
+    "lastName":"Jones"
+    }
+  }
 # Get GetReceiveOrdersQueue Name
 GET {{host}}/api/getqueuename
 
