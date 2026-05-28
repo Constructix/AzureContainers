@@ -1,0 +1,35 @@
+{
+  "status": "Failed",
+  "error": {
+    "code": "DeploymentFailed",
+    "target": "/subscriptions/fa7941a8-d614-416c-8bae-6e4a36930017/resourceGroups/rg-constructix-dev-ae-02/providers/Microsoft.Resources/deployments/AzureFunctionsOnContainerAppsDeploymentUserAssigned",
+    "message": "At least one resource deployment operation failed. Please list deployment operations for details. Please see https://aka.ms/arm-deployment-operations for usage details.",
+    "details": [
+      {
+        "code": "ResourceDeploymentFailure",
+        "target": "/subscriptions/fa7941a8-d614-416c-8bae-6e4a36930017/resourceGroups/rg-constructix-dev-ae-02/providers/Microsoft.Resources/deployments/containerAppModule",
+        "message": "The resource write operation failed to complete successfully, because it reached terminal provisioning state 'Failed'.",
+        "details": [
+          {
+            "code": "DeploymentFailed",
+            "target": "/subscriptions/fa7941a8-d614-416c-8bae-6e4a36930017/resourceGroups/rg-constructix-dev-ae-02/providers/Microsoft.Resources/deployments/containerAppModule",
+            "message": "At least one resource deployment operation failed. Please list deployment operations for details. Please see https://aka.ms/arm-deployment-operations for usage details.",
+            "details": [
+              {
+                "code": "ResourceDeploymentFailure",
+                "target": "/subscriptions/fa7941a8-d614-416c-8bae-6e4a36930017/resourceGroups/rg-constructix-dev-ae-02/providers/Microsoft.App/containerApps/functionappcontainer",
+                "message": "The resource write operation failed to complete successfully, because it reached terminal provisioning state 'Failed'.",
+                "details": [
+                  {
+                    "code": "ContainerAppOperationError",
+                    "message": "Failed to provision revision for container app 'functionappcontainer'. Error details: The following field(s) are either invalid or missing. Field 'template.containers.functionappcontainer.image' is invalid with details: 'Invalid value: \"constructixdockerregistry.azurecr.io/constructixonlineservicesfunctions:v1.0.0\": unable to pull image using Managed identity /subscriptions/fa7941a8-d614-416c-8bae-6e4a36930017/resourceGroups/rg-constructix-dev-ae-02/providers/Microsoft.ManagedIdentity/userAssignedIdentities/constructixcontainerappidentity01 for registry constructixdockerregistry.azurecr.io';.."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
