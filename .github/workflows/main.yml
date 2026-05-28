@@ -36,17 +36,17 @@ jobs:
       - name: Copy Bicep Files
         run: |
           mkdir -p artifacts/Bicep
-          cp -r **/Bicep/** artifacts/Bicep/ 2>/dev/null || true
+          cp -r **/Bicep/** artifacts/Bicep/ 2>/dev/null || true     
+      - name: Copy AzureFunctionsInContainers files
+        run: |
+          mkdir -p artifacts/AzureFunctionsInContainers
+          cp -r **/AzureFunctionsInContainers/** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: drop
           path: artifacts/
           retention-days: 7
-      - name: Copy AzureFunctionsInContainers files
-        run: |
-          mkdir -p artifacts/AzureFunctionsInContainers
-          cp -r **/AzureFunctionsInContainers/** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
   deploy:
     name: Deploy To Developement
     runs-on: ubuntu-latest
