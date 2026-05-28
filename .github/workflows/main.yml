@@ -3,7 +3,7 @@ name: Build and Deploy To Dev
 on:
   push:
     branches:
-      - [main/master]
+      - [main]
     paths:
       - 'AzureContainers/src/**'
 env:
