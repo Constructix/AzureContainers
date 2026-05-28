@@ -64,7 +64,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - name: Provision Azure Resources (Bicep)
         run: |
-          cd ./artifacts/Bicep/Deploy.ps1
+          cd ./artifacts/Bicep/UserAssigned/Deploy.ps1
         shell: pwsh
     
     
