@@ -1,0 +1,43 @@
+name: Build and Deploy To Dev
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'AzureContainers/src/**'
+env:
+  RESOURCE_GROUP: 'rg-constructix-dev-ae-02'
+  PROJECT: 'AzureContainers/src/docker.slnx'
+  IMAGE_REPOSITORY: 'constructixonlineservicesfunctions'
+  CONTAINER_REGISTRY: 'constructixdockerregistry.azurecr.io'
+  CONTAINER_REGISTRY_NAME: 'constructixdockerregistry'
+  CONTAINER_APP_NAME: 'constructixonlineservices'
+  CONTAINER_APP_ENVIRONMENT: 'funcappenvv1' 
+  
+jobs:
+  build:
+    name: Build and Package
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.x'
+          include-prerelease: true
+      - name: Build Solution
+        run: dotnet build ${{ env.PROJECT }}
+      - name: Copy Bicep Files
+        run: |
+          mkdir -p artifacts/Bicep/UserAssigned
+          cp -r **/Bicep/** artifacts/Bicep/ 2>/dev/null || true
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: drop
+          path: artifacts/
+          retention-days: 7
