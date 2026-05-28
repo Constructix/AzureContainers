@@ -14,8 +14,8 @@ env:
   IMAGE_REPOSITORY: 'constructixonlineservicesfunctions'
   CONTAINER_REGISTRY: 'constructixdockerregistry.azurecr.io'
   CONTAINER_REGISTRY_NAME: 'constructixdockerregistry'
-  CONTAINER_APP_NAME: 'constructixonlineservices'
-  CONTAINER_APP_ENVIRONMENT: 'funcappenvv1' 
+  CONTAINER_APP_NAME        : 'constructixonlineservices'
+  CONTAINER_APP_ENVIRONMENT  : 'funcappenvv1' 
   
 jobs:
   build:
