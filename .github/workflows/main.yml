@@ -67,5 +67,3 @@ jobs:
           ./Deploy.ps1
         shell: pwsh
         working-directory: ./artifacts
-    
-    
