@@ -67,3 +67,33 @@ jobs:
           ./Deploy.ps1
         shell: pwsh
         working-directory: ./artifacts
+      - name: Build and Push Docker Image to ACR
+        run: |
+          az acr login --name ${{ env.CONTAINER_REGISTRY_NAME }}
+          IMAGE="${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_REPOSITORY }}:${{ github.sha }}"
+          docker build \
+            --no-cache \
+            -f ./artifacts/AzureFunctionsInContainers/docker/Dockerfile \
+            -t $IMAGE \
+            ./artifacts/AzureFunctionsInContainers/docker
+          docker push $IMAGE          
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+
+      - name: Get Latest Image Tag
+        run: |
+          LATEST_TAG=$(az acr repository show-tags \
+            --name ${{ env.CONTAINER_REGISTRY_NAME }} \
+            --repository ${{ env.IMAGE_REPOSITORY }} \
+            --orderby time_desc \
+            --top 1 \
+            --output tsv)          
+          echo "Latest Tag: $LATEST_TAG"
+          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+      - name: Deploy to Azure Container Apps
+        run: |
+          az containerapp update \
+            --name ${{ env.CONTAINER_APP_NAME }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --image ${{ env.CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_REPOSITORY }}:${{ env.LATEST_TAG }} \
+            --ingress external \
+            --target-port 80
