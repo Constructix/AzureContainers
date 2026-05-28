@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - 'AzureContainers/src/**'
+    # this statement enables manual triggers.  
+    workflow_dispatch:
 env:
   RESOURCE_GROUP: 'rg-constructix-dev-ae-02'
   PROJECT: 'AzureContainers/src/docker.slnx'
