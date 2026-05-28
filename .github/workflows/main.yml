@@ -11,7 +11,7 @@ on:
     workflow_dispatch:
 env:
   RESOURCE_GROUP: 'rg-constructix-dev-ae-02'
-  PROJECT: '/src/docker.slnx'
+  PROJECT: 'src/docker.slnx'
   IMAGE_REPOSITORY: 'constructixonlineservicesfunctions'
   CONTAINER_REGISTRY: 'constructixdockerregistry.azurecr.io'
   CONTAINER_REGISTRY_NAME: 'constructixdockerregistry'
