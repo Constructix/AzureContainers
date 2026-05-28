@@ -13,13 +13,12 @@ env:
   CONTAINER_REGISTRY: 'constructixdockerregistry.azurecr.io'
   CONTAINER_REGISTRY_NAME: 'constructixdockerregistry'
   CONTAINER_APP_NAME: 'constructixonlineservices'
-  CONTAINER_APP_ENVIRONMENT: 'funcappenvv1'
-  VM_IMAGE: 'ubuntu-latest'
+  CONTAINER_APP_ENVIRONMENT: 'funcappenvv1' 
   
 jobs:
   build:
     name: Build and Package
-    runs-on: ${{ env.VM_IMAGE }}
+    runs-on: ubuntu-latest
     
     steps:
       - name: Checkout code
