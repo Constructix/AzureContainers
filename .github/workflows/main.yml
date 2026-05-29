@@ -109,7 +109,7 @@ jobs:
           IMAGE="${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_REPOSITORY }}:${{ github.sha }}"
           docker build \
             --no-cache \
-            -f ./artifacts/AzureFunctionsInContainers/docker/Dockerfile \
+            -f ./artifacts/AzureFunctionsInContainers/Dockerfile \
             -t $IMAGE \
             ./artifacts/AzureFunctionsInContainers/docker
           docker push $IMAGE          
