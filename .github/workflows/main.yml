@@ -56,7 +56,7 @@ jobs:
         run: |
           mkdir -p artifacts/AzureFunctionsInContainers
           shopt -s globstar
-          cp -r **/AzureFunctionsInContainers/src/** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
+          cp -r /src/** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
       # === Final Debug: Check what was copied ===
       - name: Debug - Show artifacts content
         run: |
@@ -83,16 +83,18 @@ jobs:
         with:
           name: drop
           path: ./artifacts
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Provision Azure Resources (Bicep)
-        run: |
-          cd ./Bicep
-          ./Deploy.ps1
-        shell: pwsh
-        working-directory: ./artifacts
+      #  === Debug: Show downloaded artifacts ===    
+      # - name: Azure Login
+      #   uses: azure/login@v2
+      #   with:
+      #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+      # don't deploy to Azure in this iteration, just show the files that would be deployed
+      # - name: Provision Azure Resources (Bicep)
+      #   run: |
+      #     cd ./Bicep
+      #     ./Deploy.ps1
+      #   shell: pwsh
+      #   working-directory: ./artifacts
       # - name: Build and Push Docker Image to ACR
       #   run: |
       #     az acr login --name ${{ env.CONTAINER_REGISTRY_NAME }}
