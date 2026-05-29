@@ -36,16 +36,16 @@ public class constructixHttpExample
 
     }
 
-    [Function("constructixHttpExample")]
-    public   async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
-    {
+    //[Function("constructixHttpExample")]
+    //public   async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
+    //{
 
-        _logger.LogInformation("In ConstructixHttpExample");
-        var response = req.CreateResponse(HttpStatusCode.OK);
-        response.WriteStringAsync("Welcome to Azure functions the next stage!!!");
-        return response;
+    //    _logger.LogInformation("In ConstructixHttpExample");
+    //    var response = req.CreateResponse(HttpStatusCode.OK);
+    //    response.WriteStringAsync("Welcome to Azure functions the next stage!!!");
+    //    return response;
         
-    }
+    //}
 
     [Function("GetSuppliers")]
     public async Task<HttpResponseData> GetSuppliers([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
@@ -114,17 +114,23 @@ public class constructixHttpExample
     public async Task<HttpResponseData> PostNewQuotation([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
     {
         var newQuotation =await  req.ReadFromJsonAsync<Quotation>();
-        var added =  await _quotationService.AddQuotationAsync(newQuotation);
-        if(added)
+        if (newQuotation != null)
         {
-            var response = req.CreateResponse(HttpStatusCode.Accepted);
-            await response.WriteAsJsonAsync<QuotationAdded>(new QuotationAdded("Quotation added."));
-            return response;
+            var added = await _quotationService.AddQuotationAsync(newQuotation);
+            if (added)
+            {
+                var response = req.CreateResponse(HttpStatusCode.Accepted);
+                await response.WriteAsJsonAsync<QuotationAdded>(new QuotationAdded("Quotation added."));
+                return response;
+            }
+            else
+            {
+                var response = req.CreateResponse(HttpStatusCode.BadRequest);
+                return response;
+            }
         }
-        else
-        {
-            var response = req.CreateResponse(HttpStatusCode.BadRequest);
-            return response;
+        else {  
+            return req.CreateResponse(HttpStatusCode.BadRequest);
         }
     }
     [Function("merchants")]
