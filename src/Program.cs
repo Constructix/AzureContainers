@@ -15,10 +15,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+const string LocalSettings = "local.settings.json";
 var builder = FunctionsApplication.CreateBuilder(args);
 
 
-builder.Configuration.AddJsonFile("local.settings.json", optional: true, reloadOnChange: true)
+builder.Configuration.AddJsonFile(LocalSettings, optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 var appConfigEndpoint = builder.Configuration["AppConfig"];
 // Load App Configuration
