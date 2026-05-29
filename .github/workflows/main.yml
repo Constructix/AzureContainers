@@ -126,8 +126,14 @@ jobs:
       - name: Deploy to Azure Container Apps
         run: |
           az containerapp update \
-            --name ${{ env.CONTAINER_APP_NAME }} \
-            --resource-group ${{ env.RESOURCE_GROUP }} \
-            --image ${{ env.CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_REPOSITORY }}:${{ env.LATEST_TAG }} \
-            --ingress external \
-            --target-port 80
+          --name ${{ env.CONTAINER_APP_NAME }} \
+          --resource-group ${{ env.RESOURCE_GROUP }} \
+          --image ${{ env.CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_REPOSITORY }}:${{ env.LATEST_TAG }} && \
+    
+      - name: Update Ingress Settings
+        run: |
+          az containerapp ingress update \
+          --name ${{ env.CONTAINER_APP_NAME }} \
+          --resource-group ${{ env.RESOURCE_GROUP }} \
+          --type external \
+          --target-port 80           
