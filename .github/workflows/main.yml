@@ -111,7 +111,7 @@ jobs:
             --no-cache \
             -f ./artifacts/AzureFunctionsInContainers/Dockerfile \
             -t $IMAGE \
-            ./artifacts/AzureFunctionsInContainers/docker
+            ./artifacts/AzureFunctionsInContainers
           docker push $IMAGE          
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
 
