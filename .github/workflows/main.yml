@@ -55,16 +55,14 @@ jobs:
       - name: Copy AzureFunctionsInContainers files
         run: |
           mkdir -p artifacts/AzureFunctionsInContainers
-          shopt -s globstar
-          
-          # Main attempt - copy everything under src
-          cp -r src/** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
-          
-          # Fallback - copy from AzureContainers/src if needed
-          # if [ ! -d "artifacts/AzureFunctionsInContainers/docker" ]; then
-          #   echo "Trying fallback copy from AzureContainers..."
-          #   cp -r **/src/** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
-          # fi
+          rsync -av \
+          --exclude='bin/' \
+          --exclude='obj/' \
+          --exclude='.git/' \
+          --exclude='*.user' \
+          --exclude='*.suo' \
+          --exclude='*src/' \
+          src/ artifacts/AzureFunctionsInContainers/
       # === Final Debug: Check what was copied ===
       - name: Debug - Show artifacts content
         run: |
