@@ -31,16 +31,45 @@ jobs:
         with:
           dotnet-version: '10.x'
           include-prerelease: true
+
       - name: Build Solution
         run: dotnet build ${{ env.PROJECT }}
+
+      # === Debug: Show folder structure ===
+      - name: Debug - List repository structure
+        run: |
+          echo "=== Repository Root ==="
+          ls -la
+          echo "=== Searching for AzureFunctionsInContainers ==="
+          find . -type d -name "AzureFunctionsInContainers" | head -10
+          echo "=== Searching for Bicep ==="
+          find . -type d -name "Bicep" | head -10
+
+      # === Copy Bicep ===
       - name: Copy Bicep Files
         run: |
-          mkdir -p artifacts/Bicep
-          cp -r **/Bicep/** artifacts/Bicep/ 2>/dev/null || true     
+          mkdir -p artifacts/Bicep/UserAssigned
+          cp -r **/Bicep/** artifacts/Bicep/ 2>/dev/null || true
+
+      # === Copy AzureFunctionsInContainers (Improved) ===
       - name: Copy AzureFunctionsInContainers files
         run: |
           mkdir -p artifacts/AzureFunctionsInContainers
+          shopt -s globstar
           cp -r **/AzureFunctionsInContainers/** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
+
+          # Fallback: Try common locations
+          if [ ! -d "artifacts/AzureFunctionsInContainers/docker" ]; then
+            echo "Trying alternative copy from AzureContainers..."
+            cp -r **/AzureContainers/**/AzureFunctionsInContainers/** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
+          fi
+
+      # === Final Debug: Check what was copied ===
+      - name: Debug - Show artifacts content
+        run: |
+          echo "=== Final artifacts folder structure ==="
+          ls -R artifacts/
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
