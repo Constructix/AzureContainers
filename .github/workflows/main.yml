@@ -40,8 +40,8 @@ jobs:
         run: |
           echo "=== Repository Root ==="
           ls -la
-          echo "=== Searching for AzureFunctionsInContainers ==="
-          find . -type d -name "AzureFunctionsInContainers" | head -10
+          echo "=== Searching for src ==="
+          find . -type d -name "src" | head -10
           echo "=== Searching for Bicep ==="
           find . -type d -name "Bicep" | head -10
 
