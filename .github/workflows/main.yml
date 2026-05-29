@@ -56,14 +56,7 @@ jobs:
         run: |
           mkdir -p artifacts/AzureFunctionsInContainers
           shopt -s globstar
-          cp -r **/AzureFunctionsInContainers//** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
-
-          # Fallback: Try common locations
-          if [ ! -d "artifacts/AzureFunctionsInContainers/docker" ]; then
-            echo "Trying alternative copy from AzureContainers..."
-            cp -r **/AzureContainers/**/AzureFunctionsInContainers/** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
-          fi
-
+          cp -r **/AzureFunctionsInContainers/src/** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
       # === Final Debug: Check what was copied ===
       - name: Debug - Show artifacts content
         run: |
