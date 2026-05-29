@@ -54,9 +54,17 @@ jobs:
       # === Copy AzureFunctionsInContainers (Improved) ===
       - name: Copy AzureFunctionsInContainers files
         run: |
-          mkdir -p artifacts/merchantFunction
+          mkdir -p artifacts/AzureFunctionsInContainers
           shopt -s globstar
-          cp -r /src/** artifacts/merchantFunction/ 2>/dev/null || true
+          
+          # Main attempt - copy everything under src
+          cp -r src/** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
+          
+          # Fallback - copy from AzureContainers/src if needed
+          # if [ ! -d "artifacts/AzureFunctionsInContainers/docker" ]; then
+          #   echo "Trying fallback copy from AzureContainers..."
+          #   cp -r **/src/** artifacts/AzureFunctionsInContainers/ 2>/dev/null || true
+          # fi
       # === Final Debug: Check what was copied ===
       - name: Debug - Show artifacts content
         run: |
