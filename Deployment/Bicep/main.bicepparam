@@ -1,18 +1,16 @@
 // create storage account 
 using 'main.bicep'
 
-var location = 'australiaeast'
-var resourceGroup = 'rg-constructix-dev-ae-02'
-var appConfigResourceGroup = 'rg-constructix-dev-ae-01'
-var managedIdentityName = 'constructixcontainerappidentity01'
-/* ----------------- Registry ------------------- */
-var registryContainerName = 'constructixdockerregistry'
-var repositoryName = 'constructixonlineservicesfunctions'
-/* ---------------------------------------------- */
-/* -----------------Function App ------------- -- */
-var functionAppName = 'constructixonlineservices'
-param assignRoleToAppConfig = false
-param latestImageTag = ''
+var location                                 = 'australiaeast'
+var resourceGroup                            = 'rg-constructix-dev-ae-02'
+var appConfigResourceGroup                   = 'rg-constructix-dev-ae-01'
+var managedIdentityName                      = 'constructixcontainerappidentity01'
+
+var registryContainerName                    = 'constructixdockerregistry'
+var repositoryName                           = 'constructixonlineservicesfunctions'
+var functionAppName                          = 'constructixonlineservices'
+param assignRoleToAppConfig                  = false
+param latestImageTag                         = ''
 param workspaceObject = {
   name: 'wkspaceconstructixdockerdevae01'
   location: 'AustraliaEast'
