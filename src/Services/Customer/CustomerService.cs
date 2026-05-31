@@ -1,3 +1,4 @@
+using dockerDemo.Customers.Models;
 using Microsoft.Extensions.Logging;
 
 namespace dockerDemo.Customers.Services;

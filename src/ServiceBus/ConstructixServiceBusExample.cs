@@ -1,6 +1,7 @@
 using Azure;
 using Azure.Identity;
 using Azure.Messaging.ServiceBus;
+using dockerDemo.Customers.Models;
 using dockerDemo.ServiceBus.Accessors;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.Azure.Functions.Worker;

@@ -1,6 +1,7 @@
 using Azure.Identity;
 using Azure.Messaging.ServiceBus;
 using dockerDemo;
+using dockerDemo.Customers.Models;
 using dockerDemo.Customers.Services;
 using dockerDemo.Customers.Services.Products;
 using dockerDemo.Quotations.Models;

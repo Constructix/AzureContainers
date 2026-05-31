@@ -1,8 +1,15 @@
 {
   "ExpandedNodes": [
     "",
+    "\\.github",
+    "\\.github\\workflows",
     "\\src",
-    "\\src\\ServiceBus"
+    "\\src\\Postman Collection",
+    "\\src\\Powershell Scripts",
+    "\\src\\Services",
+    "\\src\\Services\\Customer",
+    "\\src\\Services\\Products"
   ],
+  "SelectedNode": "\\src\\Services\\Customer\\CustomerService.cs",
   "PreviewInSolutionExplorer": false
 }

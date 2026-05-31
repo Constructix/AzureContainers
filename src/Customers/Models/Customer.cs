@@ -1,4 +1,4 @@
-namespace dockerDemo;
+namespace dockerDemo.Customers.Models;
 
 public class Customer
 {

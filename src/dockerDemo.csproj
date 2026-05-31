@@ -22,9 +22,6 @@
 	<ItemGroup>
 		<None Include="Dockerfile" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Folder Include="Customers\Models\" />
-	</ItemGroup>
 
 
 </Project>
