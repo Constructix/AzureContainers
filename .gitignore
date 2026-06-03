@@ -3,3 +3,6 @@
 ################################################################################
 
 /.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
+/Deployment/Bicep/ContainerRegistry/ConstructixOnLineServices/.vscode/settings.json
+/Deployment/Bicep/VNET/Bicep/.vscode/settings.json
