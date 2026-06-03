@@ -5,7 +5,7 @@ on:
       - main
     paths:
       - 'AzureContainers/src/**'
-      - '**'
+     #- '**' # for the moment comment out this. don't rebuild 
     # this statement enables manual triggers.  
     workflow_dispatch:
 env:
