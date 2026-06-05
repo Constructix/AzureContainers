@@ -94,12 +94,12 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - name: Provision Azure Container Registry
-        run: |
-          cd ./Bicep/ContainerRegistry
-          ./deploy.ps1
-        shell: pwsh
-        working-directory: ./artifacts        
+      # - name: Provision Azure Container Registry
+      #   run: |
+      #     cd ./Bicep/ContainerRegistry
+      #     ./deploy.ps1
+      #   shell: pwsh
+      #  working-directory: ./artifacts        
       - name: Provision Azure Resources (Bicep)
         run: |
           cd ./Bicep

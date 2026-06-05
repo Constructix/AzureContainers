@@ -45,12 +45,12 @@ output logAnalyticsSharedKey string = logAnalyticsModule.outputs.sharedKey
 // if the registry already exists. By separating the registry creation into its own bicep file and deployment task, 
 // we can ensure that the registry is only created when it doesn't already exist, and we can also handle any errors that may occur during registry creation more gracefully.
 /*  ------- Create Registry  ------------------------*/
-// module registryContainerModule 'ContainerRegistry/CreateRegistry.bicep' = {
-//   name: 'registryContainerModule'
-//   params: {
-//     registryContainerObject: registryContainerObject
-//   }
-// }
+module registryContainerModule 'ContainerRegistry/CreateRegistry.bicep' = {
+  name: 'registryContainerModule'
+  params: {
+    registryContainerObject: registryContainerObject
+  }
+}
 
 /* CREATE SERVICE BUS */
 module createServiceBusNamespaceAndQueuesModule 'ServiceBus/CreateServiceBusNamespaceAndQueues.bicep' ={
@@ -58,6 +58,7 @@ module createServiceBusNamespaceAndQueuesModule 'ServiceBus/CreateServiceBusName
     params: {
         ServicebusObject                    : serviceBusObject
     }
+dependsOn:[registryContainerModule]
 }
 
 
@@ -86,7 +87,7 @@ module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnv
     logAnalyticsCustomerId                  : logAnalyticsModule.outputs.customerId // ← wire in
     logAnalyticsSharedKey                   : logAnalyticsModule.outputs.sharedKey // ← wire in
   }
-  dependsOn:[assignRolesModule]
+  dependsOn:[assignRolesModule,registryContainerModule]
 }
 
 module containerAppModule 'Container/CreateContainer.bicep' = {
