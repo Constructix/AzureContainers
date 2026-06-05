@@ -103,7 +103,7 @@ module containerAppModule 'Container/CreateContainer.bicep' = {
     appInsightsObject                       : appInsightsObject
     latestImageTag                          : latestImageTag
   }
-  dependsOn: [createDockerContainerEnvionmentModule, assignRolesModule, createAppInsightsModule, identityModule ]
+  dependsOn: [createDockerContainerEnvionmentModule, assignRolesModule, createAppInsightsModule, identityModule,registryContainerModule ]
 }
 
 module assignRolesModule 'AssignRoles/AssignRoles.bicep' = if (assignRoleToAppConfig) {

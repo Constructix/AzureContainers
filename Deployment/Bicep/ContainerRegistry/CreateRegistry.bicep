@@ -2,9 +2,9 @@
 param registryContainerObject object
 
 resource registries_constructixfirstcontainerregistry_name_resource 'Microsoft.ContainerRegistry/registries@2025-11-01' = {
-  name: registryContainerObject.name
-  location: registryContainerObject.location
-  tags: registryContainerObject.tagValues
+  name                                                      : registryContainerObject.name
+  location                                                  : registryContainerObject.location
+  tags                                                      : registryContainerObject.tagValues
   sku: registryContainerObject.sku
   identity: {
     type: 'SystemAssigned'

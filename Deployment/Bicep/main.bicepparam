@@ -40,18 +40,18 @@ param managedIdentityObject = {
 }
 
 param registryContainerObject = {
-  name: registryContainerName
-  repositoryName: repositoryName
-  resourceGroup: resourceGroup
-  location: location
+  name                                      : registryContainerName
+  repositoryName                            : repositoryName
+  resourceGroup                             : resourceGroup
+  location                                  : location
   tagValues: {
-    Environment: 'dev'
-    Company: 'Constructix'
-    Purpse: 'Container registry for Constructix docker images'
+    Environment                             : 'dev'
+    Company                                 : 'Constructix'
+    Purpse                                  : 'Container registry for Constructix docker images'
   }
   sku: {
-    name: 'Basic'
-    tier: 'Basic'
+    name                                    : 'Basic'
+    tier                                    : 'Basic'
   }
 }
 param storageAccountObject = {

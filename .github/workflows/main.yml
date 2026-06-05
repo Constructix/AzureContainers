@@ -76,71 +76,85 @@ jobs:
           path: artifacts/
           retention-days: 7
   deploy:
-    name: Deploy To Developement
+    name: Deploy to Development
     runs-on: ubuntu-latest
     needs: build
     environment: DEV
     steps:
-      - name : Checkout Code
-        uses : actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Download Build Artifacts
         uses: actions/download-artifact@v4
         with:
           name: drop
           path: ./artifacts
-      #  === Debug: Show downloaded artifacts ===    
+
       - name: Azure Login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      # - name: Provision Azure Container Registry
-      #   run: |
-      #     cd ./Bicep/ContainerRegistry
-      #     ./deploy.ps1
-      #   shell: pwsh
-      #  working-directory: ./artifacts        
-      - name: Provision Azure Resources (Bicep)
+
+      # === 1. Deploy Infrastructure (including ACR) ===
+      - name: Deploy Bicep Infrastructure
         run: |
-          cd ./Bicep
+          cd ./artifacts/Bicep
           ./Deploy.ps1
         shell: pwsh
-        working-directory: ./artifacts
-      - name: Build and Push Docker Image to ACR
+
+      # === 2. Build and Push Docker Image ===
+      - name: Build and Push to ACR
         run: |
           az acr login --name ${{ env.CONTAINER_REGISTRY_NAME }}
-          IMAGE="${{ env.CONTAINER_REGISTRY }}/${{ env.IMAGE_REPOSITORY }}:${{ github.sha }}"
+          
+          IMAGE_TAG="${{ github.sha }}"
+          FULL_IMAGE="${{ env.CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_REPOSITORY }}:${IMAGE_TAG}"
+          
+          echo "Building image: $FULL_IMAGE"
+          
           docker build \
             --no-cache \
             -f ./artifacts/AzureFunctionsInContainers/Dockerfile \
-            -t $IMAGE \
+            -t $FULL_IMAGE \
             ./artifacts/AzureFunctionsInContainers
-          docker push $IMAGE          
-          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+          
+          docker push $FULL_IMAGE
+          
+          echo "IMAGE=$FULL_IMAGE" >> $GITHUB_ENV
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
         env:
           DOCKER_BUILDKIT: 1
 
-      # - name: Get Latest Image Tag
-      #   run: |
-      #     LATEST_TAG=$(az acr repository show-tags \
-      #       --name ${{ env.CONTAINER_REGISTRY_NAME }} \
-      #       --repository ${{ env.IMAGE_REPOSITORY }} \
-      #       --orderby time_desc \
-      #       --top 1 \
-      #       --output tsv)          
-      #     echo "Latest Tag: $LATEST_TAG"
-      #     echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
-      - name: Deploy to Azure Container Apps
+      # === 3. Verify Image was pushed ===
+      - name: Verify Image in ACR
         run: |
+          echo "Checking repository tags..."
+          az acr repository show-tags \
+            --name ${{ env.CONTAINER_REGISTRY_NAME }} \
+            --repository ${{ env.IMAGE_REPOSITORY }} \
+            --output table
+
+      # === 4. Update Container App ===
+      - name: Update Container App
+        run: |
+          echo "Updating Container App with image: ${{ env.IMAGE }}"
+          
           az containerapp update \
-          --name ${{ env.CONTAINER_APP_NAME }} \
-          --resource-group ${{ env.RESOURCE_GROUP }} \
-          --image ${{ env.CONTAINER_REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_REPOSITORY }}:${{ env.LATEST_TAG }}
-    
+            --name ${{ env.CONTAINER_APP_NAME }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --image ${{ env.IMAGE }} \
+            --revision-suffix ${{ github.sha }} \
+            --min-replicas 1 \
+            --max-replicas 10
+          
+          echo "Container App updated successfully with new revision."
+        continue-on-error: false
+
+      # === 5. Update Ingress Settings ===
       - name: Update Ingress Settings
         run: |
           az containerapp ingress update \
-          --name ${{ env.CONTAINER_APP_NAME }} \
-          --resource-group ${{ env.RESOURCE_GROUP }} \
-          --type external \
-          --target-port 80           
+            --name ${{ env.CONTAINER_APP_NAME }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --type external \
+            --target-port 80         
