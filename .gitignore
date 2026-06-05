@@ -9,3 +9,4 @@
 *.json
 *.vsidx
 *.sqlite
+/Deployment/Bicep/.vs/Bicep.slnx/v18/.wsuo
