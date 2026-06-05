@@ -146,8 +146,7 @@ jobs:
             --name ${{ env.CONTAINER_APP_NAME }} \
             --resource-group ${{ env.RESOURCE_GROUP }} \
             --image ${{ env.IMAGE }} \
-            --revision-suffix ${{ env.SHORT_SHA }} \  
-            --min-replicas 1 \
-            --max-replicas 10
-          
+            --ingress external \
+            --target-port 80 
+
           echo "Container App updated successfully with new revision."       
