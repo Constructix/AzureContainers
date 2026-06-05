@@ -5,7 +5,7 @@ on:
       - main
     paths:
       - 'AzureContainers/src/**'
-     #- '**' # for the moment comment out this. don't rebuild 
+      - '**'
     # this statement enables manual triggers.  
     workflow_dispatch:
 env:
@@ -94,7 +94,12 @@ jobs:
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      # don't deploy to Azure in this iteration, just show the files that would be deployed
+      - name: Provision Azure Container Registry
+        run: |
+          cd ./Bicep/ContainerRegistry
+          ./deploy.ps1
+        shell: pwsh
+        working-directory: ./artifacts        
       - name: Provision Azure Resources (Bicep)
         run: |
           cd ./Bicep
