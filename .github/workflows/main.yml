@@ -146,7 +146,14 @@ jobs:
             --name ${{ env.CONTAINER_APP_NAME }} \
             --resource-group ${{ env.RESOURCE_GROUP }} \
             --image ${{ env.IMAGE }} \
-            --ingress external \
-            --target-port 80 
+           echo "Container App updated successfully."
 
-          echo "Container App updated successfully with new revision."       
+      # === 5. Update Ingress ===
+      - name: Update Ingress Settings
+        run: |
+          az containerapp ingress update \
+            --name ${{ env.CONTAINER_APP_NAME }} \
+            --resource-group ${{ env.RESOURCE_GROUP }} \
+            --type external \
+            --target-port 80
+            
