@@ -117,17 +117,19 @@ jobs:
             ./artifacts/AzureFunctionsInContainers
           docker push $IMAGE          
           echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+        env:
+          DOCKER_BUILDKIT: 1
 
-      - name: Get Latest Image Tag
-        run: |
-          LATEST_TAG=$(az acr repository show-tags \
-            --name ${{ env.CONTAINER_REGISTRY_NAME }} \
-            --repository ${{ env.IMAGE_REPOSITORY }} \
-            --orderby time_desc \
-            --top 1 \
-            --output tsv)          
-          echo "Latest Tag: $LATEST_TAG"
-          echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+      # - name: Get Latest Image Tag
+      #   run: |
+      #     LATEST_TAG=$(az acr repository show-tags \
+      #       --name ${{ env.CONTAINER_REGISTRY_NAME }} \
+      #       --repository ${{ env.IMAGE_REPOSITORY }} \
+      #       --orderby time_desc \
+      #       --top 1 \
+      #       --output tsv)          
+      #     echo "Latest Tag: $LATEST_TAG"
+      #     echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
       - name: Deploy to Azure Container Apps
         run: |
           az containerapp update \

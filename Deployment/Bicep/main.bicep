@@ -48,7 +48,7 @@ output logAnalyticsSharedKey string = logAnalyticsModule.outputs.sharedKey
 module registryContainerModule 'ContainerRegistry/CreateRegistry.bicep' = {
   name: 'registryContainerModule'
   params: {
-    registryContainerObject: registryContainerObject
+    registryContainerObject                : registryContainerObject
   }
 }
 
@@ -58,7 +58,7 @@ module createServiceBusNamespaceAndQueuesModule 'ServiceBus/CreateServiceBusName
     params: {
         ServicebusObject                    : serviceBusObject
     }
-dependsOn:[registryContainerModule]
+
 }
 
 
@@ -87,7 +87,7 @@ module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnv
     logAnalyticsCustomerId                  : logAnalyticsModule.outputs.customerId // ← wire in
     logAnalyticsSharedKey                   : logAnalyticsModule.outputs.sharedKey // ← wire in
   }
-  dependsOn:[assignRolesModule,registryContainerModule]
+  dependsOn:[assignRolesModule]
 }
 
 module containerAppModule 'Container/CreateContainer.bicep' = {
