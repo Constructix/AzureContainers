@@ -137,26 +137,32 @@ jobs:
             --repository ${{ env.IMAGE_REPOSITORY }} \
             --output table
 
-      # === 4. Update Container App ===
-      - name: Update Container App
-        run: |
-          echo "Updating Container App with image: ${{ env.IMAGE }}"
-          
-          az containerapp update \
-            --name ${{ env.CONTAINER_APP_NAME }} \
-            --resource-group ${{ env.RESOURCE_GROUP }} \
-            --image ${{ env.IMAGE }} 
+      - name: Deploying App Container App
+        run: | 
+         pwsh ./artifacts/Bicep/CreateContainer-deploy-dev.ps1
+        shell: pwsh
 
-           echo "Container App updated successfully."
 
-      # === 5. Update Ingress ===
-      - name: Update Ingress Settings
-        run: |
-          az containerapp ingress update \
-            --name ${{ env.CONTAINER_APP_NAME }} \
-            --resource-group ${{ env.RESOURCE_GROUP }} \
-            --type external \
-            --target-port 80
+      # # === 5. Update Container App ===
+      # - name: Update Container App
+      #   run: |
+      #     echo "Updating Container App with image: $IMAGE"
+    
+      #     az containerapp update \
+      #       --name ${{ env.CONTAINER_APP_NAME }} \
+      #       --resource-group ${{ env.RESOURCE_GROUP }} \
+      #       --image $IMAGE
 
-            echo "Container App ingress settings updated successfully."
+      #     echo "Container App updated successfully."
+
+      # # === 6. Update Ingress ===
+      # - name: Update Ingress Settings
+      #   run: |
+      #     az containerapp ingress update \
+      #       --name ${{ env.CONTAINER_APP_NAME }} \
+      #       --resource-group ${{ env.RESOURCE_GROUP }} \
+      #       --type external \
+      #       --target-port 80
+
+      #    echo "Container App ingress settings updated successfully."
             

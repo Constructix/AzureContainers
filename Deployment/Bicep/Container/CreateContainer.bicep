@@ -1,12 +1,11 @@
-param userAssignedIdentityClientId string
-param uamiResourceId string
+param latestImageTag string
+param appInsightsObject object
+param containerAppsEnvironment object
+param managedIdentityObject object 
 param containerApp object
 param storageAccountObject object
 param registryContainerObject object
-param containerAppsEnvironment object
-param appConfigObject object
-param appInsightsObject object
-param latestImageTag string
+param appConfigurationObject object
 
 var repositoryName = '${registryContainerObject.name}.azurecr.io/${registryContainerObject.repositoryName}:${latestImageTag}'
 
@@ -24,23 +23,25 @@ resource dockerContainerAppEnvironmentModule 'Microsoft.App/managedEnvironments@
 resource storageAccountResource 'Microsoft.Storage/storageAccounts@2025-06-01' existing = {
   name: storageAccountObject.name
 }
-
-resource appConfigResource 'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview' existing = {
-    name: appConfigObject.name    
-    scope: resourceGroup(appConfigObject.resourceGroup)
+resource userAssignedManagedIdentityResource 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
+  name: managedIdentityObject.name  
 }
 
-//
-// CONTAINER APP
-//
+resource appConfigResource 'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview' existing = {
+    name: appConfigurationObject.name
+    scope: resourceGroup(appConfigurationObject.resourceGroup)
+}
+
+
+
 resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' = {
   name: containerApp.name
-  location: containerApp.location
+  location                                      : resourceGroup().location
   kind: 'functionapp'
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${uamiResourceId}': {}
+      '${userAssignedManagedIdentityResource.id}': {}
     }
   }
   properties: {
@@ -65,7 +66,7 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
       registries: [
         {
           server: '${registryContainerObject.name}.azurecr.io'
-          identity: uamiResourceId //'system'
+          identity: userAssignedManagedIdentityResource.id //'system'
         }
       ]
       identitySettings: []
@@ -91,7 +92,7 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
             }
             {
               name: 'AZURE_CLIENT_ID'
-              value: userAssignedIdentityClientId
+              value:  userAssignedManagedIdentityResource.properties.clientId //userAssignedIdentityClientId
             }
 
             {
@@ -112,7 +113,7 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
             }
             {
               name: 'AzureWebJobsStorage__clientId' // only needed for user-assigned
-              value: userAssignedIdentityClientId
+              value: userAssignedManagedIdentityResource.id
             }
             {
               name: 'AzureWebJobsStorage__blobServiceUri'
