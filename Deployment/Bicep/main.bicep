@@ -90,21 +90,21 @@ module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnv
   dependsOn:[assignRolesModule]
 }
 
-module containerAppModule 'Container/CreateContainer.bicep' = {
-  name: 'containerAppModule'
-  params: {
-    userAssignedIdentityClientId            : identityModule.outputs.clientId
-    uamiResourceId                          : identityModule.outputs.resourceId
-    containerApp                            : containerApp
-    storageAccountObject                    : storageAccountObject
-    registryContainerObject                 : registryContainerObject
-    appConfigObject                         : appConfigurationObject
-    containerAppsEnvironment                : containerAppsEnvironment
-    appInsightsObject                       : appInsightsObject
-    latestImageTag                          : latestImageTag
-  }
-  dependsOn: [createDockerContainerEnvionmentModule, assignRolesModule, createAppInsightsModule, identityModule,registryContainerModule ]
-}
+// module containerAppModule 'Container/CreateContainer.bicep' = {
+//   name: 'containerAppModule'
+//   params: {
+//     userAssignedIdentityClientId            : identityModule.outputs.clientId
+//     uamiResourceId                          : identityModule.outputs.resourceId
+//     containerApp                            : containerApp
+//     storageAccountObject                    : storageAccountObject
+//     registryContainerObject                 : registryContainerObject
+//     appConfigObject                         : appConfigurationObject
+//     containerAppsEnvironment                : containerAppsEnvironment
+//     appInsightsObject                       : appInsightsObject
+//     latestImageTag                          : latestImageTag
+//   }
+//   dependsOn: [createDockerContainerEnvionmentModule, assignRolesModule, createAppInsightsModule, identityModule,registryContainerModule ]
+// }
 
 module assignRolesModule 'AssignRoles/AssignRoles.bicep' = if (assignRoleToAppConfig) {
   name                                      : 'assignRolesModule'
@@ -128,5 +128,5 @@ module appConfigurationModule 'AssignRoles/AssignContainerReaderToAppConfig.bice
     principalId                             : identityModule.outputs.principalId
     identityResourceId                      : identityModule.outputs.resourceId
   }
-  dependsOn: [containerAppModule, assignRolesModule]
+  dependsOn: [ assignRolesModule]
 }
