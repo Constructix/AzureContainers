@@ -137,9 +137,9 @@ jobs:
             --repository ${{ env.IMAGE_REPOSITORY }} \
             --output table
 
-      - name: Deploying App Container App
+      - name: Deploying App Container 
         run: | 
-         pwsh ./artifacts/Bicep/CreateContainer-deploy-dev.ps1
+         pwsh ./artifacts/Bicep/Container/CreateContainer-deploy-dev.ps1
         shell: pwsh
 
 
