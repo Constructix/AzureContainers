@@ -139,9 +139,9 @@ jobs:
 
       - name: Deploying App Container 
         run: | 
-          pwsh ./artifacts/Bicep/Container/CreateContainer-deploy-dev.ps1
+          cd  cd ./artifacts/Bicep/Container
+          ./CreateContainer-deploy-dev.ps1
         shell: pwsh
-
 
       # # === 5. Update Container App ===
       # - name: Update Container App
