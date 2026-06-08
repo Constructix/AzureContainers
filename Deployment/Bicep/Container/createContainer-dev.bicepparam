@@ -20,9 +20,13 @@ param storageAccountObject = {
   name: 'staazurefunc01' 
 }
 param containerApp = {
-  name: 'constructixonlineservices'
-
-
+  name                                      : 'constructixonlineservices'
+  scale: {
+	 minReplicas                            : 1
+     maxReplicas                            : 10
+     cooldownPeriod                         : 300
+     pollingInterval                        : 30
+  }
 }
 param containerAppsEnvironment = {
   name: 'funcappenvv1' 

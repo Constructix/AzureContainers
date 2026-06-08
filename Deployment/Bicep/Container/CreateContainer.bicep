@@ -143,12 +143,13 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
           }
         }
       ]
-      scale: {
-        minReplicas: 1
-        maxReplicas: 10
-        cooldownPeriod: 300
-        pollingInterval: 30
-      }
+      scale: containerApp.scale
+      // scale: {
+      //   minReplicas: 1
+      //   maxReplicas: 10
+      //   cooldownPeriod: 300
+      //   pollingInterval: 30
+      // }
     }
   }
 }
