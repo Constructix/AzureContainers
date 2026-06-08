@@ -11,6 +11,7 @@ var repositoryName                           = 'constructixonlineservicesfunctio
 var functionAppName                          = 'constructixonlineservices'
 param assignRoleToAppConfig                  = false
 param latestImageTag                         = ''
+
 param workspaceObject = {
   name: 'wkspaceconstructixdockerdevae01'
   location: 'AustraliaEast'
