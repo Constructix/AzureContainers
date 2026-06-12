@@ -5,7 +5,7 @@ param logAnalyticsCustomerId string // ← add this
 param logAnalyticsSharedKey string // ← add this
 
 resource managedEnvironments_dockercontainerdevenvironment_name_resource 'Microsoft.App/managedEnvironments@2025-10-02-preview' = {
-  name: containerAppsEnvironment.name //managedEnvironments_dockercontainerdevenvironment_name
+  name: containerAppsEnvironment.name 
   location: containerAppsEnvironment.location
   tags: containerAppsEnvironment.tags
   identity: {

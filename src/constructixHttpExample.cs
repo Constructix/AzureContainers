@@ -11,10 +11,6 @@ using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace dockerDemo;
-
-
-
-
 public class constructixHttpExample
 {
     private readonly ILogger<constructixHttpExample> _logger;
@@ -28,38 +24,23 @@ public class constructixHttpExample
         IConfiguration configuration,
         IQuotationService quotationService)
     {        
-        _logger = logger;
-       _customerService = customerService; 
-        _productService = productService;
-        _configuration = configuration;
-        _quotationService = quotationService;
-
-    }
-
-    //[Function("constructixHttpExample")]
-    //public   async Task<HttpResponseData> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")] HttpRequestData req)
-    //{
-
-    //    _logger.LogInformation("In ConstructixHttpExample");
-    //    var response = req.CreateResponse(HttpStatusCode.OK);
-    //    response.WriteStringAsync("Welcome to Azure functions the next stage!!!");
-    //    return response;
-        
-    //}
+        _logger                 = logger;
+       _customerService         = customerService; 
+        _productService         = productService;
+        _configuration          = configuration;
+        _quotationService       = quotationService;
+    }   
 
     [Function("GetSuppliers")]
     public async Task<HttpResponseData> GetSuppliers([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
     {
-        _logger.LogInformation("C# HTTP trigger function processed a request to get suppliers.");
-
-        
+        _logger.LogInformation("C# HTTP trigger function processed a request to get suppliers.");        
         var suppliers = new List<Supplier>
         {
             new Supplier { Name = "Supplier A" },
             new Supplier { Name = "Supplier B" },
             new Supplier { Name = "Supplier C" }
-        };
-        //return new OkObjectResult( suppliers); 
+        };        
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteAsJsonAsync(suppliers);
         return response;    
@@ -68,10 +49,7 @@ public class constructixHttpExample
     public async Task<HttpResponseData> GetCustomers([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
     {
         _logger.LogInformation("C# HTTP trigger function processed a request to get customers.");
-
-
-        var customerList = await _customerService.GetCustomersAsync();
-        
+        var customerList = await _customerService.GetCustomersAsync();        
         var response = req.CreateResponse(HttpStatusCode.OK);
         await response.WriteAsJsonAsync(customerList);    
         return response;

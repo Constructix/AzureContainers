@@ -13,7 +13,7 @@ param registryContainerObject = {
   location: location
   tagValues: {
     Environment: 'dev'
-    Company: 'Constructix'
+    Company: 'ECQ'
     Purpse: 'Container registry for Constructix docker images'
   }
   sku: {

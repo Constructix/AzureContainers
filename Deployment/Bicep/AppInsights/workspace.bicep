@@ -2,7 +2,7 @@ param name string = 'constructixdockerdevae01'
 param location string = 'australiaeast'
 param sku string = 'pergb2018'
 param tags object = {
-  Company: 'Constructix'
+  Company: 'ECQ'
   Environment: 'dev'
   Purpose: 'Creating an application insights resource for container app environment'
 }

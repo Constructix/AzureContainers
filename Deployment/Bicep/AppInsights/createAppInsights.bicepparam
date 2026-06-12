@@ -5,7 +5,7 @@ param workspaceObject = {
   location: 'AustraliaEast'
   sku: 'pergb2018'
   tags: {
-    Company: 'Constructix'
+    Company: 'ECQ'
     Environment: 'dev'
     Purpose: 'Creating an application insights resource for container app environment'
   }
@@ -16,7 +16,7 @@ param appInsightsObject = {
   region: 'australiaeast'
   requestSource: 'IbizaAIExtension'
   tags: {
-    Company: 'Constructix'
+    Company: 'ECQ'
     Environment: 'dev'
     Purpose: 'Creating an application insights resource for container app environment'
   }

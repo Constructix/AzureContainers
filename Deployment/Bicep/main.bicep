@@ -12,49 +12,43 @@ param containerAppsEnvironment object
 param appConfigurationObject object
 param serviceBusObject object
 
-output storageAccountName string        = storageAccountObject.name
-output containerAppName string          = containerApp.name
-output workspaceName string             = workspaceObject.name
+output storageAccountName string            = storageAccountObject.name
+output containerAppName string              = containerApp.name
+output workspaceName string                 = workspaceObject.name
 
 module createAppInsightsModule 'AppInsights/createAppInsights.bicep' = {
-  name: 'createAppInsightsModule'
+  name                                      : 'createAppInsightsModule'
+  scope                                     : resourceGroup(appInsightsObject.resourceGroup)
   params: {
-    workspaceObject: workspaceObject
-    appInsightsObject: appInsightsObject
+    workspaceObject                         : workspaceObject
+    appInsightsObject                       : appInsightsObject
   }
 }
 
 /* ------- Create Log Analytics -------- */
 module logAnalyticsModule 'LogAnalytics/CreateLogAnalytics.bicep' = {
-  name: 'logAnalyticsModule'
+  name                                      : 'logAnalyticsModule'
+  scope                                     : resourceGroup(workspaceObject.resourceGroup)
   params: {
-    workspaceObject: workspaceObject
+    workspaceObject                         : workspaceObject
   }
   dependsOn: [createAppInsightsModule]
 }
-output logAnalyticsCustomerId string = logAnalyticsModule.outputs.customerId
-output logAnalyticsSharedKey string = logAnalyticsModule.outputs.sharedKey
-/* -------- End Create Log Analytics -------- */
+output logAnalyticsCustomerId string        = logAnalyticsModule.outputs.customerId
+output logAnalyticsSharedKey string         = logAnalyticsModule.outputs.sharedKey
 
-// this should be in a seperate task, after the build then check if the registry exists, 
-// if not then create it, if it does then skip to pushing the image to the registry. 
-// This is because we dont want to have to build the image every time we want to deploy, 
-// only when there are changes to the dockerfile or codebase that should trigger a new image build 
-// and push to the registry. If we have the registry creation in the same bicep file as the container app, 
-// then it will try to create the registry every time we deploy, which will cause issues 
-// if the registry already exists. By separating the registry creation into its own bicep file and deployment task, 
-// we can ensure that the registry is only created when it doesn't already exist, and we can also handle any errors that may occur during registry creation more gracefully.
-/*  ------- Create Registry  ------------------------*/
 module registryContainerModule 'ContainerRegistry/CreateRegistry.bicep' = {
-  name: 'registryContainerModule'
+  name                                      : 'registryContainerModule'
+  scope                                     : resourceGroup(registryContainerObject.resourceGroup)
   params: {
-    registryContainerObject                : registryContainerObject
+    registryContainerObject                 : registryContainerObject
   }
 }
 
-/* CREATE SERVICE BUS */
+
 module createServiceBusNamespaceAndQueuesModule 'ServiceBus/CreateServiceBusNamespaceAndQueues.bicep' ={
-    name: 'createServiceBusAndQueues'
+    name                                    : 'createServiceBusAndQueues'
+    scope                                   : resourceGroup(serviceBusObject.resourceGroup)
     params: {
         ServicebusObject                    : serviceBusObject
     }
@@ -65,12 +59,13 @@ module createServiceBusNamespaceAndQueuesModule 'ServiceBus/CreateServiceBusName
 /* -------- Create Storage Account -------- */
 module storageAccountModule 'StorageAccount/CreateStorageAccount.bicep' = {
   name                                      : 'storageAccountModule'
+  scope                                     : resourceGroup(storageAccountObject.resourceGroup)
   params: {
     storageAccountObject                    : storageAccountObject
   }
   dependsOn:[createServiceBusNamespaceAndQueuesModule]
 }
-// identity module should be deployed before the container app, because we need the principalId of the identity to assign roles to it, and the role assignment needs to be done before the container app can pull images from the registry or access the storage account. By deploying the identity module first, we can ensure that the necessary permissions are in place for the container app to function correctly when it is deployed.
+
 module identityModule 'Identity/CreateIdentity.bicep' = {
   name                                      : 'identityModule'
   params: {
@@ -81,7 +76,8 @@ module identityModule 'Identity/CreateIdentity.bicep' = {
 
 
 module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnvironment.bicep' = {
-  name: 'createDockerContainerEnvionmentModule'
+  name                                      : 'createDockerContainerEnvionmentModule'
+  scope                                     : resourceGroup(containerAppsEnvironment.resourceGroup)
   params: {
     containerAppsEnvironment                : containerAppsEnvironment
     logAnalyticsCustomerId                  : logAnalyticsModule.outputs.customerId // ← wire in
