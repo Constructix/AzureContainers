@@ -2,7 +2,7 @@
 using 'main.bicep'
 
 var location                                 = 'australiaeast'
-var resourceGroup                            = 'rg-ems-elector-dev'
+var resourceGroup                            = 'rg-ems-elector-ae-dev'
 var appConfigResourceGroup                   = 'rg-constructix-dev-ae-01'
 var managedIdentityName                      = 'constructixcontainerappidentity01'
 
@@ -59,7 +59,7 @@ param registryContainerObject = {
 }
 param storageAccountObject = {
   name                                      : 'staazurefunc01'
-  resourceGroup                             : 'rg-ems-elector-dev'
+  resourceGroup                             : 'rg-ems-elector-ae-dev'
   location                                  : location
   sku: {
     name                                    : 'Standard_GRS'
