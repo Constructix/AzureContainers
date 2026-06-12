@@ -5,15 +5,15 @@ param principalId string
 param identityResourceId string
 //ACR (EXISTING) //
 resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01' existing = {
-  name: registryContainerObject.name
+  name                                                  : registryContainerObject.name 
 }
 // STORAGE ACCOUNT (EXISTING)//
 resource storageAccountResource 'Microsoft.Storage/storageAccounts@2025-06-01' existing = {
-  name: storageAccountObject.name
+  name                                                  : storageAccountObject.name
 }
 
 resource svcBusNamespaceResource 'Microsoft.ServiceBus/namespaces@2025-05-01-preview' existing = {
-    name: serviceBusObject.name
+    name                                                : serviceBusObject.name
 }
 
 

@@ -1,12 +1,12 @@
 $latestTag = az acr repository show-tags `
-  --name constructixdockerregistry `
-  --repository constructixonlineservicesfunctions `
+  --name crelectordevae `
+  --repository electorservicesrepository `
   --orderby time_desc `
   --top 1 `
   --output tsv 
 Write-Host "Latest Tag:$latestTag" 
 az deployment group create `
   --name AzureFunctionsOnContainerAppsDeploymentUserAssigned `
-  --resource-group rg-constructix-dev-ae-02 `
+  --resource-group rg-ems-elector-ae-dev `
   --template-file CreateContainer.bicep `
   --parameters createContainer-dev.bicepparam latestImageTag=$latestTag

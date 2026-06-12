@@ -3,25 +3,26 @@ using 'main.bicep'
 
 var location                                 = 'australiaeast'
 var resourceGroup                            = 'rg-ems-elector-ae-dev'
-var appConfigResourceGroup                   = 'rg-constructix-dev-ae-01'
-var managedIdentityName                      = 'constructixcontainerappidentity01'
+var appConfigResourceGroup                   = 'rg-constructix-dev-ae-01' // legacy appconfig resource. will move onto appconfig on shared rg.
+var managedIdentityName                      = 'electorcontainerappidentity01'
 
 var registryContainerName                    = 'crelectordevae'
 var repositoryName                           = 'electorservicesrepository'
+var tags object = {
+     Company                                 : 'ECQ'
+     Environment                             : 'DEV'
+}
 var functionAppName                          = 'caelectordevae'
 param assignRoleToAppConfig                  = false
 param latestImageTag                         = ''
+
 
 param workspaceObject = {
   name                                      : 'logemscommondevae'
   resourceGroup                             : 'rg-monitoring-ems-dev-ae'
   location                                  : 'AustraliaEast'
   sku                                       : 'pergb2018'
-  tags: {
-    Company                                 : 'ECQ'
-    Environment                             : 'dev'
-    Purpose                                 : 'Creating an application insights resource for container app environment'
-  }
+  tags                                      : tags
 }
 param appInsightsObject = {
   name                                      : 'appiemscommondevae'
@@ -29,17 +30,13 @@ param appInsightsObject = {
   type                                      : 'web'
   region                                    : 'australiaeast'
   requestSource                             : 'IbizaAIExtension'
-  tags: {
-    Company: 'ECQ'
-    Environment: 'dev'
-    Purpose: 'Creating an application insights resource for container app environment'
-  }
+  tags                                      : tags
 }
 
 param managedIdentityObject = {
-  name: managedIdentityName
-  resourceGroup: resourceGroup
-  location: location
+  name                                      : managedIdentityName
+  resourceGroup                             : resourceGroup
+  location                                  : location
 }
 
 param registryContainerObject = {
@@ -49,8 +46,7 @@ param registryContainerObject = {
   location                                  : location
   tagValues: {
     Environment                             : 'dev'
-    Company                                 : 'ECQ'
-    Purpse                                  : 'Container registry for Constructix docker images'
+    Company                                 : 'ECQ'    
   }
   sku: {
     name                                    : 'Basic'
@@ -58,7 +54,7 @@ param registryContainerObject = {
   }
 }
 param storageAccountObject = {
-  name                                      : 'staazurefunc01'
+  name                                      : 'stelectoraedev'
   resourceGroup                             : 'rg-ems-elector-ae-dev'
   location                                  : location
   sku: {
@@ -90,11 +86,7 @@ param containerAppsEnvironment = {
   name                                      : 'caeelectordevae'
   resourceGroup                             : 'rg-ems-elector-ae-dev'
   location                                  : location
-  tags: {
-    Company                                 : 'ECQ'
-    Environment                             : 'dev'
-    Purpose                                 : 'Creating a container app environment'
-  }
+  tags                                      : tags
 }
 
 param appConfigurationObject = {
