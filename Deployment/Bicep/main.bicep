@@ -25,7 +25,6 @@ module createAppInsightsModule 'AppInsights/createAppInsights.bicep' = {
   }
 }
 
-/* ------- Create Log Analytics -------- */
 module logAnalyticsModule 'LogAnalytics/CreateLogAnalytics.bicep' = {
   name                                                  : 'logAnalyticsModule'
   scope                                                 : resourceGroup(workspaceObject.resourceGroup)
@@ -94,8 +93,7 @@ module assignRolesModule 'AssignRoles/AssignRoles.bicep' = if (assignRoleToAppCo
   scope                                                 : resourceGroup()
   params: {
     registryContainerObject                             : registryContainerObject
-    storageAccountObject                                : storageAccountObject
-    serviceBusObject                                    : serviceBusObject
+    storageAccountObject                                : storageAccountObject    
     principalId                                         : identityModule.outputs.principalId
     identityResourceId                                  : identityModule.outputs.resourceId
   }
@@ -103,6 +101,17 @@ module assignRolesModule 'AssignRoles/AssignRoles.bicep' = if (assignRoleToAppCo
     storageAccountModule, identityModule, createServiceBusNamespaceAndQueuesModule
   ]
 }
+
+module assignServiceBusRoleModule 'AssignRoles/AssignServiceBusDataOwnerTo.bicep' = {
+    name                                                : 'AssignServiceBusRoles'
+    scope                                               : resourceGroup(serviceBusObject.resourceGroup)
+    params : {
+        serviceBusObject                                : serviceBusObject
+        principalId                                     : identityModule.outputs.principalId        
+    }
+}
+
+
 
 module appConfigurationModule 'AssignRoles/AssignContainerReaderToAppConfig.bicep' = if (assignRoleToAppConfig) {
   name                                                  : 'appConfigurationModule'
@@ -114,3 +123,5 @@ module appConfigurationModule 'AssignRoles/AssignContainerReaderToAppConfig.bice
   }
   dependsOn: [ assignRolesModule]
 }
+
+
