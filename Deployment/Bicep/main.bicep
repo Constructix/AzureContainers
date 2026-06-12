@@ -100,7 +100,7 @@ module assignRolesModule 'AssignRoles/AssignRoles.bicep' = if (assignRoleToAppCo
     identityResourceId                                  : identityModule.outputs.resourceId
   }
   dependsOn: [
-    storageAccountModule, identityModule
+    storageAccountModule, identityModule, createServiceBusNamespaceAndQueuesModule
   ]
 }
 
