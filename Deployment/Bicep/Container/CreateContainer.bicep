@@ -24,7 +24,7 @@ resource dockerContainerAppEnvironmentModule 'Microsoft.App/managedEnvironments@
 
 resource storageAccountResource 'Microsoft.Storage/storageAccounts@2025-06-01' existing = {
   name                                                  : storageAccountObject.name
-  scope                                                 : resourceGroup(storageAccountObject.)
+  scope                                                 : resourceGroup(storageAccountObject.resourceGroup)
 }
 resource userAssignedManagedIdentityResource 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   name                                                  : managedIdentityObject.name  
