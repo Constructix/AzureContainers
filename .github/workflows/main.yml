@@ -12,10 +12,10 @@ env:
   RESOURCE_GROUP                       : 'rg-constructix-dev-ae-02'
   PROJECT                              : 'src/docker.slnx'
   IMAGE_REPOSITORY                     : 'electorservicesrepository'
-  CONTAINER_REGISTRY                   : 'constructixdockerregistry.azurecr.io'
+  CONTAINER_REGISTRY                   : 'crelectordevae.azurecr.io'
   CONTAINER_REGISTRY_NAME              : 'crelectordevae'
-  CONTAINER_APP_NAME                   : 'constructixonlineservices'
-  CONTAINER_APP_ENVIRONMENT            : 'funcappenvv1' 
+  #CONTAINER_APP_NAME                   : 'constructixonlineservices'
+  #CONTAINER_APP_ENVIRONMENT            : 'funcappenvv1' 
   
 jobs:
   build:
