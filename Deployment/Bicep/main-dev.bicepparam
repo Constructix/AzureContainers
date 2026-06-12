@@ -102,7 +102,7 @@ param appConfigurationObject = {
 }
 
 param serviceBusObject = {
-    name                                    : 'constructix-orders-ae-dev'
+    name                                    : 'sbns-selectorsae-dev'
     resourceGroup                           : 'rg-shared-ems-dev-ae'
     location                                : location
      sku: {
