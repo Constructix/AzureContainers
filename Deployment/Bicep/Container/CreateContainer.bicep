@@ -137,6 +137,26 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
               name                                      : 'AppConfig'
               value                                     : appConfigResource.properties.endpoint
             }
+            {
+              name                                      : 'WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED'
+                  value                                 : '1'
+            }
+            {
+                name                                    : 'AzureWebJobsScriptRoot'
+                value                                   : '/home/site/wwwroot'
+            }
+            {
+                name                                    : 'DOTNET_RUNNING_IN_CONTAINER'
+                value                                   : 'true'
+            }
+            {
+                name                                    : 'FUNCTIONS_WORKER_RUNTIME_VERSION'
+                value                                   : '10.0'        // match your .NET 10 image
+            }
+            {
+                name                                    : 'AzureFunctionsJobHost__Logging__Console__IsEnabled'
+                value                                   : 'true'
+            }
           ]
           resources: {
             cpu                                         : json('0.5')
