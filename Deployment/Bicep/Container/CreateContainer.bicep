@@ -1,7 +1,7 @@
 param latestImageTag string
 param appInsightsObject object
 param containerAppsEnvironment object
-param managedIdentityObject object 
+param managedIdentityObject object
 param containerApp object
 param storageAccountObject object
 param registryContainerObject object
@@ -13,37 +13,37 @@ output tagUsed string = latestImageTag
 output RespositoryName string = repositoryName
 
 resource appInsightsResource 'Microsoft.Insights/components@2020-02-02' existing = {
-  name                                                  : appInsightsObject.name
-  scope                                                 : resourceGroup(appInsightsObject.resourceGroup)
+  name: appInsightsObject.name
+  scope: resourceGroup(appInsightsObject.resourceGroup)
 }
 
 resource dockerContainerAppEnvironmentModule 'Microsoft.App/managedEnvironments@2025-10-02-preview' existing = {
-  name                                                  : containerAppsEnvironment.name
-  scope                                                 : resourceGroup(containerAppsEnvironment.resourceGroup)
+  name: containerAppsEnvironment.name
+  scope: resourceGroup(containerAppsEnvironment.resourceGroup)
 }
 
 resource storageAccountResource 'Microsoft.Storage/storageAccounts@2025-06-01' existing = {
-  name                                                  : storageAccountObject.name
-  scope                                                 : resourceGroup(storageAccountObject.resourceGroup)
+  name: storageAccountObject.name
+  scope: resourceGroup(storageAccountObject.resourceGroup)
 }
 resource userAssignedManagedIdentityResource 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
-  name                                                  : managedIdentityObject.name  
-  scope                                                 : resourceGroup(managedIdentityObject.resourceGroup)
+  name: managedIdentityObject.name
+  scope: resourceGroup(managedIdentityObject.resourceGroup)
 }
 
 resource appConfigResource 'Microsoft.AppConfiguration/configurationStores@2025-08-01-preview' existing = {
-    name                                                : appConfigurationObject.name
-    scope                                               : resourceGroup(appConfigurationObject.resourceGroup)
+  name: appConfigurationObject.name
+  scope: resourceGroup(appConfigurationObject.resourceGroup)
 }
 
 resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' = {
-  name: containerApp.name
+  name                                                  : containerApp.name
   location                                              : resourceGroup().location
   kind                                                  : 'functionapp'
   identity: {
     type                                                : 'UserAssigned'
     userAssignedIdentities: {
-      '${userAssignedManagedIdentityResource.id}'       : {}
+      '${userAssignedManagedIdentityResource.id}': {}
     }
   }
   properties: {
@@ -51,7 +51,7 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
     environmentId                                       : dockerContainerAppEnvironmentModule.id
     workloadProfileName                                 : 'Consumption'
     configuration: {
-      activeRevisionsMode                               : 'Single'
+      activeRevisionsMode: 'Single'
       ingress: {
         external                                        : true
         targetPort                                      : 80
@@ -94,7 +94,7 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
             }
             {
               name                                      : 'AZURE_CLIENT_ID'
-              value                                     :  userAssignedManagedIdentityResource.properties.clientId //userAssignedIdentityClientId
+              value                                     : userAssignedManagedIdentityResource.properties.clientId //userAssignedIdentityClientId
             }
 
             {
@@ -137,11 +137,10 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
               name                                      : 'AppConfig'
               value                                     : appConfigResource.properties.endpoint
             }
-
           ]
           resources: {
-            cpu: json('0.5')
-            memory: '1Gi'
+            cpu                                         : json('0.5')
+            memory                                      : '1Gi'
           }
         }
       ]
@@ -155,3 +154,8 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
     }
   }
 }
+
+output containerAppId string = containerAppResource.id
+output containerAppIdentity object = containerAppResource.identity
+output containerAppPrincipalId string = containerAppResource.identity.principalId
+

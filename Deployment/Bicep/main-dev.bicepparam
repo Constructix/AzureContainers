@@ -3,7 +3,7 @@ using 'main.bicep'
 
 var location                                 = 'australiaeast'
 var resourceGroup                            = 'rg-ems-elector-ae-dev'
-var appConfigResourceGroup                   = 'rg-constructix-dev-ae-01' // legacy appconfig resource. will move onto appconfig on shared rg.
+
 var managedIdentityName                      = 'electorcontainerappidentity01'
 
 var registryContainerName                    = 'crelectordevae'
@@ -91,7 +91,7 @@ param containerAppsEnvironment = {
 
 param appConfigurationObject = {
   name                                      : 'apconfig-constructix-ae-dev-01'
-  resourceGroup                             : appConfigResourceGroup
+  resourceGroup                             : 'rg-constructix-dev-ae-01'
   roleDefinitionId                          : '516239f1-63e1-4d78-a4de-a74fb236a071'
   roles: [
     {

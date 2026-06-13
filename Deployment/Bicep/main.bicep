@@ -113,7 +113,7 @@ module assignServiceBusRoleModule 'AssignRoles/AssignServiceBusDataOwnerTo.bicep
 
 
 
-module appConfigurationModule 'AssignRoles/AssignContainerReaderToAppConfig.bicep' = if (assignRoleToAppConfig) {
+module appConfigurationModule 'AssignRoles/AssignContainerReaderToAppConfig.bicep' = {
   name                                                  : 'appConfigurationModule'
   scope                                                 : resourceGroup(appConfigurationObject.resourceGroup)
   params: {
