@@ -1,7 +1,8 @@
 # For more info on HTTP files go to https://aka.ms/vs/httpfile
 @host = http://localhost:7134
 @localdockerhost=http://localhost:8080
-@dockerHost =https://functionappcontainerv1.delightfulflower-f177dfaf.australiaeast.azurecontainerapps.io
+@dockerHost =https://caelectordevae.icypond-7d345262.australiaeast.azurecontainerapps.io
+//
 GET {{host}}/api/constructixHttpExample
 ###
 GET {{host}}/api/GetCustomers

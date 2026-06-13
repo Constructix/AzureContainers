@@ -6,7 +6,7 @@ $latestTag = az acr repository show-tags `
   --output tsv 
 Write-Host "Latest Tag:$latestTag" 
 az deployment group create `
-  --name AzureFunctionsOnContainerAppsDeploymentUserAssigned `
+  --name DeployContainerApp `
   --resource-group rg-ems-elector-ae-dev `
   --template-file CreateContainer.bicep `
   --parameters createContainer-dev.bicepparam latestImageTag=$latestTag
