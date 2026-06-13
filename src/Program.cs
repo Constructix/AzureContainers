@@ -28,12 +28,20 @@ builder.Configuration.AddAzureAppConfiguration(options =>
 {
     Uri endpoint = new Uri(uriString: appConfigEndpoint);
     options.Connect(endpoint, new DefaultAzureCredential())
+            .ConfigureKeyVault(kv =>
+            {
+                
+                kv.SetCredential(new DefaultAzureCredential());
+            })
            .Select(KeyFilter.Any, LabelFilter.Null)
            .ConfigureRefresh(refreshOptions =>
            {
                refreshOptions.RegisterAll();
            });
+
+    
 });
+
 builder.Services.AddAzureClients(async clientBuilder =>
 {
     var sbNameSpace = builder.Configuration["Constructix.DockerDemo.ServiceBusNamespace"];

@@ -29,7 +29,9 @@ public class constructixHttpExample
         _productService         = productService;
         _configuration          = configuration;
         _quotationService       = quotationService;
-    }   
+    }
+
+  
 
     [Function("GetSuppliers")]
     public async Task<HttpResponseData> GetSuppliers([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
@@ -77,6 +79,19 @@ public class constructixHttpExample
         await response.WriteAsJsonAsync(new QueueDetails(queueName));
         return response;
     }
+
+    [Function("KeyVaultFoodToGo")]
+    public async Task<HttpResponseData> GetKeyVaultFoodToGoSubscriptionId([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
+    {
+        _logger.LogInformation("C# HTTP trigger function processed a request to get queue name.");
+        var subscriptionId = _configuration.GetValue<string>("FoodToGoSubscription") ?? "Not Found";
+
+        var response = req.CreateResponse(HttpStatusCode.OK);
+        await response.WriteAsJsonAsync(new Subscription(subscriptionId));
+        return response;
+    }
+
+
 
     [Function("quotations")]
     public async Task<HttpResponseData> GetQuotations([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
@@ -126,5 +141,6 @@ public class Supplier
     public string Name { get; set; } = string.Empty;
 }
 
+public record Subscription(string subscriptionId);
 public record QueueDetails(string QueueName);
 public record QuotationAdded(string Messsage);
