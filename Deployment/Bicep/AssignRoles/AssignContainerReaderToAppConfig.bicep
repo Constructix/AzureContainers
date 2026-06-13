@@ -8,7 +8,7 @@ resource appConfigurationResource 'Microsoft.AppConfiguration/configurationStore
 
 resource assignAppConfigRoles 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
   for role in appConfigurationObject.roles: {
-    name: guid(appConfigurationResource.id, identityResourceId, role.name)
+    name: guid(appConfigurationResource.id, principalId, role.name)
     scope: appConfigurationResource
     properties: {
       roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', role.id)
