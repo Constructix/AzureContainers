@@ -76,6 +76,7 @@ param storageAccountObject = {
       name                                  : 'Storage Table Data Contributor'
     }
   ]
+  tags                                      : tags
 }
 param containerApp = {
   name                                      : functionAppName

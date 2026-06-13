@@ -144,7 +144,7 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
           }
         }
       ]
-      scale: containerApp.scale
+      scale                                             : containerApp.scale
       // scale: {
       //   minReplicas: 1
       //   maxReplicas: 10
@@ -155,7 +155,10 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
   }
 }
 
-output containerAppId string = containerAppResource.id
-output containerAppIdentity object = containerAppResource.identity
-output containerAppPrincipalId string = containerAppResource.identity.principalId
+output containerAppId string                            = containerAppResource.id
+output containerAppIdentity object                      = containerAppResource.identity
+output containerAppPrincipalId string                   = userAssignedManagedIdentityResource.properties.principalId
 
+// Bonus helpful outputs
+output containerAppClientId string                      = userAssignedManagedIdentityResource.properties.clientId
+output containerAppName string                          = containerAppResource.name
