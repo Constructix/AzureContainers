@@ -1,6 +1,6 @@
 param (
-	[string] $ResourceGroup # Repository Group
-	[string] $ContainerRepository #Respository Name query the latest tag, to passin and create the container app. 
+	[string] $ResourceGroup,
+	[string] $ContainerRepository 
 )
 $latestImageTag = az acr repository show-tags `
   --name crelectordevae `
@@ -8,7 +8,12 @@ $latestImageTag = az acr repository show-tags `
   --orderby time_desc `
   --top 1 `
   --output tsv 
-Write-Host "Latest Tag:$latestTag" 
+if (-not $latestImageTag) {
+	Write-Error "Failed to retrieve latest image tag from ACR."
+	exit 1
+}
+
+Write-Host "Latest Tag:$latestImageTag" 
 az deployment group create `
   --name DeployContainerApp `
   --resource-group $ResourceGroup `
