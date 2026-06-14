@@ -8,10 +8,6 @@ $latestImageTag = az acr repository show-tags `
   --orderby time_desc `
   --top 1 `
   --output tsv 
-if (-not $latestImageTag) {
-	Write-Error "Failed to retrieve latest image tag from ACR."
-	exit 1
-}
 
 Write-Host "Latest Tag:$latestImageTag" 
 az deployment group create `
