@@ -20,7 +20,7 @@ var functionAppName                          = 'caelectordevae'
 param assignRoleToAppConfig                  = false
 param latestImageTag                         = ''
 
-@description('Defines workspace object')
+
 param workspaceObject = {
   name                                      : 'logemscommondevae'
   resourceGroup                             : 'rg-monitoring-ems-dev-ae'
