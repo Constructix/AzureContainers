@@ -1,6 +1,10 @@
 // create storage account 
 using 'main.bicep'
 
+type TagValues = {
+    Environment                              : 'DEV'|'Test'|'PREPROD'|'PROD'
+    Company                                  : string
+}
 var location                                 = 'australiaeast'
 var resourceGroup                            = 'rg-ems-elector-ae-dev'
 
@@ -8,7 +12,7 @@ var managedIdentityName                      = 'electorcontainerappidentity01'
 
 var registryContainerName                    = 'crelectordevae'
 var repositoryName                           = 'electorservicesrepository'
-var tags object = {
+var tags TagValues = {
      Company                                 : 'ECQ'
      Environment                             : 'DEV'
 }
@@ -16,7 +20,7 @@ var functionAppName                          = 'caelectordevae'
 param assignRoleToAppConfig                  = false
 param latestImageTag                         = ''
 
-
+@description('Defines workspace object')
 param workspaceObject = {
   name                                      : 'logemscommondevae'
   resourceGroup                             : 'rg-monitoring-ems-dev-ae'
@@ -118,4 +122,15 @@ param serviceBusObject = {
     }
     
   ]
+}
+
+param keyVaultObject = {
+    name                                    : 'kvconstructixaedev02'
+    resourceGroup                           : 'rg-constructix-dev-ae-01'
+    roles: [
+        {       
+            id                              : '4633458b-17de-408a-b874-0445c86b69e6'
+            name                            : 'Key Vault Secrets User'
+        }
+    ]
 }

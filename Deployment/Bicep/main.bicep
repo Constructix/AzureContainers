@@ -11,7 +11,7 @@ param containerApp object
 param containerAppsEnvironment object
 param appConfigurationObject object
 param serviceBusObject object
-
+param keyVaultObject object 
 output storageAccountName string                        = storageAccountObject.name
 output containerAppName string                          = containerApp.name
 output workspaceName string                             = workspaceObject.name
@@ -122,6 +122,15 @@ module appConfigurationModule 'AssignRoles/AssignContainerReaderToAppConfig.bice
     identityResourceId                                  : identityModule.outputs.resourceId
   }
   dependsOn: [ assignRolesModule]
+}
+
+module keyVaultModule  'AssignRoles/AssignKeyVaultReaderRoleToIdentity.bicep' ={
+    name                                                : 'AssignIdentityToKeyVaultModule'
+    scope                                               : resourceGroup(keyVaultObject.resourceGroup)
+    params: {
+        keyVaultObject                                  : keyVaultObject
+        principalId                                     : identityModule.outputs.principalId
+    }
 }
 
 
