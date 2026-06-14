@@ -140,7 +140,7 @@ jobs:
       - name: Deploying App Container 
         run: | 
           cd ./artifacts/Bicep/Container
-          ./CreateContainer-deploy-dev.ps1 -ResourceGroup ${{ env.DEV_RESOURCE_GROUP }} 
+          ./CreateContainer-deploy-dev.ps1
         shell: pwsh
 
       # # === 5. Update Container App ===

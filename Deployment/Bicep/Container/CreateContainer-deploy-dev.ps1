@@ -1,17 +1,12 @@
-param (
-	[string] $ResourceGroup,
-	[string] $ContainerRepository 
-)
-$latestImageTag = az acr repository show-tags `
+$latestTag = az acr repository show-tags `
   --name crelectordevae `
-  --repository $ContainerRepository `
+  --repository electorservicesrepository `
   --orderby time_desc `
   --top 1 `
   --output tsv 
-
-Write-Host "Latest Tag:$latestImageTag" 
+Write-Host "Latest Tag:$latestTag" 
 az deployment group create `
   --name DeployContainerApp `
-  --resource-group $ResourceGroup `
+  --resource-group rg-ems-elector-ae-dev `
   --template-file CreateContainer.bicep `
-  --parameters createContainer-dev.bicepparam latestImageTag=$latestImageTag
+  --parameters createContainer-dev.bicepparam latestImageTag=$latestTag
