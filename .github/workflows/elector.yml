@@ -103,7 +103,7 @@ jobs:
           ./Deploy.ps1 `
             -ResourceGroup ${{ env.DEV_RESOURCE_GROUP }} `
             -ContainerRepository ${{ env.DEV_CONTAINTER_REPOSITORY }} `           
-            -Environment dev `
+            -DeploymentEnvironment 'dev' `
             -RepositoryName ${{ env.IMAGE_REPOSITORY }} 
         shell: pwsh
 

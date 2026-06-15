@@ -2,7 +2,7 @@ param (
 	[string] $ResourceGroup,
 	[string] $ContainerRegistry,
 	[string] $RepositoryName,
-	[string] $Environment
+	[string] $DeploymentEnv
 )
 #az role assignment delete --assignee $clientId --scope $(az appconfig show -n 'apconfig-constructix-ae-dev-01' -g 'rg-constructix-dev-ae-01' --query id -o tsv)     
 #az identity delete --name "electorcontainerappidentity01" --resource-group "$resourceGroup"
@@ -21,4 +21,4 @@ az deployment group create `
   --name AzureFunctionsOnContainerAppsDeploymentUserAssigned `
   --resource-group $ResourceGroup `
   --template-file main.bicep `
-  --parameters main-$Environment.bicepparam latestImageTag=$latestTag assignRoleToAppConfig=true
+  --parameters main-$DeploymentEnv.bicepparam latestImageTag=$latestTag assignRoleToAppConfig=true
