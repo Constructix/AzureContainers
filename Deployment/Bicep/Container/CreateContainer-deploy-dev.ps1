@@ -1,11 +1,12 @@
 param (
 	[string] $ResourceGroup,
 	[string] $ContainerRegistry,
+	[string] $RepositoryName
 	[string] $Environment
 )
 $latestTag = az acr repository show-tags `
   --name $ContainerRegistry `
-  --repository electorservicesrepository `
+  --repository $RepositoryName `
   --orderby time_desc `
   --top 1 `
   --output tsv 
