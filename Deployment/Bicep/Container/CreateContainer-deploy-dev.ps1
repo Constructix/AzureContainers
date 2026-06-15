@@ -1,7 +1,7 @@
 param (
 	[string] $ResourceGroup,
 	[string] $ContainerRegistry,
-	[string] $RepositoryName
+	[string] $RepositoryName,
 	[string] $Environment
 )
 $latestTag = az acr repository show-tags `
