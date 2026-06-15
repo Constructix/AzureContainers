@@ -1,6 +1,7 @@
 param (
 	[string] $ResourceGroup,
 	[string] $ContainerRegistry,
+	[string] $RepositoryName
 	[string] $Environment
 )
 #az role assignment delete --assignee $clientId --scope $(az appconfig show -n 'apconfig-constructix-ae-dev-01' -g 'rg-constructix-dev-ae-01' --query id -o tsv)     
@@ -8,7 +9,7 @@ param (
 
 $latestTag = az acr repository show-tags `
   --name $ContainerRegistry `
-  --repository electorservicesrepository `
+  --repository $RepositoryName `
   --orderby time_desc `
   --top 1 `
   --output tsv 

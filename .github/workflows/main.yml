@@ -102,7 +102,9 @@ jobs:
           cd ./artifacts/Bicep
           ./Deploy.ps1 -ResourceGroup ${{ env.DEV_RESOURCE_GROUP }} `
             -ContainerRepository ${{ env.DEV_CONTAINTER_REPOSITORY }} `
-            -Environment ${{ env.ENVIRONMENT_NAME }}
+            -RepositoryName ${{ IMAGE_REPOSITORY }}
+            -Environment ${{ env.ENVIRONMENT_NAME }} `
+
         shell: pwsh
 
       # === 2. Build and Push Docker Image ===
@@ -146,7 +148,8 @@ jobs:
           ./CreateContainer-deploy-dev.ps1 `
             -ResourceGroup ${{ env.DEV_RESOURCE_GROUP }} `
             -ContainerRegistry ${{ env.CONTAINER_REGISTRY_NAME}} `
-            -Environment ${{ env.ENVIRONMENT_NAME }}
+            -Environment ${{ env.ENVIRONMENT_NAME }} `
+            -$RepositoryName electorservicesrepository
         shell: pwsh
 
       # # === 5. Update Container App ===
