@@ -1,8 +1,8 @@
 param (
-	[string] $ResourceGroup,
-	[string] $ContainerRegistry,
-	[string] $RepositoryName,
-	[string] $DeploymentEnv
+	 [string] $ResourceGroup, 
+     [string] $ContainerRepository,
+     [string] $DeploymentEnv, 
+     [string] $RepositoryName 
 )
 #az role assignment delete --assignee $clientId --scope $(az appconfig show -n 'apconfig-constructix-ae-dev-01' -g 'rg-constructix-dev-ae-01' --query id -o tsv)     
 #az identity delete --name "electorcontainerappidentity01" --resource-group "$resourceGroup"
