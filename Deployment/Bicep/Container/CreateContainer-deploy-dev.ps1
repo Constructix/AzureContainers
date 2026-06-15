@@ -1,5 +1,10 @@
+param (
+	[string] $ResourceGroup,
+	[string] $ContainerRegistry,
+	[string] $Environment
+)
 $latestTag = az acr repository show-tags `
-  --name crelectordevae `
+  --name $ContainerRegistry `
   --repository electorservicesrepository `
   --orderby time_desc `
   --top 1 `
@@ -7,6 +12,6 @@ $latestTag = az acr repository show-tags `
 Write-Host "Latest Tag:$latestTag" 
 az deployment group create `
   --name DeployContainerApp `
-  --resource-group rg-ems-elector-ae-dev `
+  --resource-group $ResourceGroup `
   --template-file CreateContainer.bicep `
-  --parameters createContainer-dev.bicepparam latestImageTag=$latestTag
+  --parameters createContainer-$Environment.bicepparam latestImageTag=$latestTag
