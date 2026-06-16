@@ -48,10 +48,7 @@ param registryContainerObject = {
   repositoryName                            : repositoryName
   resourceGroup                             : resourceGroup
   location                                  : location
-  tagValues: {
-    Environment                             : 'dev'
-    Company                                 : 'ECQ'    
-  }
+  tagValues                                 : tags
   sku: {
     name                                    : 'Basic'
     tier                                    : 'Basic'

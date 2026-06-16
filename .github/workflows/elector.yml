@@ -7,9 +7,8 @@ on:
       - '**'
     # this statement enables manual triggers.  
   workflow_dispatch:
-env:
-  RESOURCE_GROUP                       : 'rg-constructix-dev-ae-02'
-  PROJECT                              : 'src/docker.slnx'
+env: 
+  SOLUTION                             : 'src/docker.slnx'
   IMAGE_REPOSITORY                     : 'electorservicesrepository'
   CONTAINER_REGISTRY                   : 'crelectordevae.azurecr.io'
   CONTAINER_REGISTRY_NAME              : 'crelectordevae'  
@@ -30,7 +29,7 @@ jobs:
           include-prerelease: true
 
       - name: Build Solution
-        run: dotnet build ${{ env.PROJECT }}
+        run: dotnet build ${{ env.SOLUTION }}
 
       # === Debug: Show folder structure ===
       - name: Debug - List repository structure
