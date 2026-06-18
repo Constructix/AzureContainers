@@ -1,4 +1,3 @@
 <Solution>
-  <Project Path="../../ISO27001/ISO27001Log/ISO27001Log.csproj" />
   <Project Path="dockerDemo.csproj" />
 </Solution>
