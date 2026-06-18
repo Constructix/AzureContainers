@@ -5,6 +5,10 @@ type TagValues = {
     Environment                              : 'DEV'|'Test'|'PREPROD'|'PROD'
     Company                                  : string
 }
+type RoleValues = {
+    id                                       : string
+    name                                     : string
+}
 var location                                 = 'australiaeast'
 var resourceGroup                            = 'rg-ems-elector-ae-dev'
 
@@ -43,6 +47,11 @@ param managedIdentityObject = {
   location                                  : location
 }
 
+var registryContainerRole RoleValues        = { 
+    id                                      : '7f951dda-4ed3-4680-a7ca-43fe172d538d'
+    name                                    : 'AcrPull'
+}
+
 param registryContainerObject = {
   name                                      : registryContainerName
   repositoryName                            : repositoryName
@@ -53,12 +62,12 @@ param registryContainerObject = {
     name                                    : 'Basic'
     tier                                    : 'Basic'
   }
-  roles : [
-      {
-          id                                : '7f951dda-4ed3-4680-a7ca-43fe172d538d'
-          name                              : 'AcrPull'
-      }
-  ]
+  roles                                     : [ registryContainerRole]
+      // {
+      //     id                                : '7f951dda-4ed3-4680-a7ca-43fe172d538d'
+      //     name                              : 'AcrPull'
+      // }
+ 
 }
 param storageAccountObject = {
   name                                      : 'stelectoraedev'

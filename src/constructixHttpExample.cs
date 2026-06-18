@@ -1,3 +1,4 @@
+using System.Net;
 using dockerDemo.Customers.Services;
 using dockerDemo.Customers.Services.Products;
 using dockerDemo.Quotations.Models;
@@ -8,7 +9,9 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Net;
+
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.OpenApi.Models;
 
 namespace dockerDemo;
 public class constructixHttpExample
@@ -34,6 +37,8 @@ public class constructixHttpExample
   
 
     [Function("GetSuppliers")]
+    [OpenApiOperation(operationId:"GetSupppliers", tags: new[] { "Supplier"})]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(List<Supplier>))]
     public async Task<HttpResponseData> GetSuppliers([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
     {
         _logger.LogInformation("C# HTTP trigger function processed a request to get suppliers.");        

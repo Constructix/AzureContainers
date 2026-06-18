@@ -16,6 +16,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
+
 const string LocalSettings = "local.settings.json";
 var builder = FunctionsApplication.CreateBuilder(args);
 
@@ -23,6 +25,9 @@ var builder = FunctionsApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile(LocalSettings, optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 var appConfigEndpoint = builder.Configuration["AppConfig"];
+
+
+
 // Load App Configuration
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
@@ -72,6 +77,9 @@ builder.UseAzureAppConfiguration();
 
 // Configure the Functions Worker (NO ASP.NET Core)
 //builder.ConfigureFunctionsWorkerDefaults();
+
+
+
 
 // Build and run
 builder.Build().Run();
