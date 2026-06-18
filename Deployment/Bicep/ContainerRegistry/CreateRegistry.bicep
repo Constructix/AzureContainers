@@ -2,44 +2,44 @@
 param registryContainerObject object
 
 resource registries_constructixfirstcontainerregistry_name_resource 'Microsoft.ContainerRegistry/registries@2025-11-01' = {
-  name                                                      : registryContainerObject.name
-  location                                                  : registryContainerObject.location
-  tags                                                      : registryContainerObject.tagValues
-  sku: registryContainerObject.sku
+  name                                                  : registryContainerObject.name
+  location                                              : registryContainerObject.location
+  tags                                                  : registryContainerObject.tagValues
+  sku                                                   : registryContainerObject.sku
   identity: {
-    type: 'SystemAssigned'
+    type                                                : 'SystemAssigned'
   }
   properties: {
     adminUserEnabled: true
     policies: {
       quarantinePolicy: {
-        status: 'disabled'
+        status                                          : 'disabled'
       }
       trustPolicy: {
-        type: 'Notary'
-        status: 'disabled'
+        type                                            : 'Notary'
+        status                                          : 'disabled'
       }
       retentionPolicy: {
-        days: 7
-        status: 'disabled'
+        days                                            : 7
+        status                                          : 'disabled'
       }
       exportPolicy: {
-        status: 'enabled'
+        status                                          : 'enabled'
       }
       azureADAuthenticationAsArmPolicy: {
-        status: 'enabled'
+        status                                          : 'enabled'
       }
     }
     encryption: {
-      status: 'disabled'
+      status                                            : 'disabled'
     }
-    dataEndpointEnabled: false
-    publicNetworkAccess: 'Enabled'
-    networkRuleBypassOptions: 'AzureServices'
-    networkRuleBypassAllowedForTasks: false
-    zoneRedundancy: 'Disabled'
-    anonymousPullEnabled: false
-    roleAssignmentMode: 'LegacyRegistryPermissions'
+    dataEndpointEnabled                                 : false
+    publicNetworkAccess                                 : 'Enabled'
+    networkRuleBypassOptions                            : 'AzureServices'
+    networkRuleBypassAllowedForTasks                    : false
+    zoneRedundancy                                      : 'Disabled'
+    anonymousPullEnabled                                : false
+    roleAssignmentMode                                  : 'LegacyRegistryPermissions'
   }
 }
 

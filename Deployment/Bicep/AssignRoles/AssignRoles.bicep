@@ -24,16 +24,14 @@ resource assignRolesToStorageAccount 'Microsoft.Authorization/roleAssignments@20
   }  
 ]
 
-
-resource acrPullRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name                                                  : guid(acr.id, principalId, 'AcrPull')
-  scope                                                 : acr
-  properties: {
-    roleDefinitionId: subscriptionResourceId(
-      'Microsoft.Authorization/roleDefinitions',
-      '7f951dda-4ed3-4680-a7ca-43fe172d538d' // AcrPull
-    )
-    principalId                                         : principalId
-    principalType                                       : 'ServicePrincipal'
-  } 
-}
+resource assignRolesToRegistryContainer 'Microsoft.Authorization/roleAssignments@2022-04-01' = [
+  for role in registryContainerObject.roles: {
+    name: guid(acr.id, principalId, role.name)
+    scope: acr
+    properties: {
+      roleDefinitionId                                  : subscriptionResourceId('Microsoft.Authorization/roleDefinitions', role.id)
+      principalId                                       : principalId
+      principalType                                     : 'ServicePrincipal'
+    }
+  }  
+]
