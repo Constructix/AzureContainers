@@ -9,6 +9,29 @@ type RoleValues = {
     id                                       : string
     name                                     : string
 }
+
+type serviceBusQueueProperties ={
+    maxMessageSizeInKilobytes                : int
+    lockDuration                             : string
+    maxSizeInMegabytes                       : int
+    requiresDuplicateDetection               : bool                   
+    requiresSession                          : bool                     
+    defaultMessageTimeToLive                 : string                       
+    deadLetteringOnMessageExpiration         : bool
+    enableBatchedOperations                  : bool
+    duplicateDetectionHistoryTimeWindow      : string
+    maxDeliveryCount                         : int
+    status                                   : string
+    autoDeleteOnIdle                         : string
+    enablePartitioning                       : bool
+    enableExpress                            : bool                            
+}
+
+type serviceBusQueue ={
+    queueName                               : string
+    properties                              : serviceBusQueueProperties
+}
+
 var location                                 = 'australiaeast'
 var resourceGroup                            = 'rg-ems-elector-ae-dev'
 
@@ -126,7 +149,48 @@ param appConfigurationObject = {
   roles                                     : [ appConfigReaderRole]
 }
 
-param serviceBusObject = {
+
+var epollmarkoffsQueue  serviceBusQueue ={
+    queueName                               : 'epollmarkoffs'
+    properties: {
+        maxMessageSizeInKilobytes           : 256
+        lockDuration                        : 'PT1M'
+        maxSizeInMegabytes                  : 1024
+        requiresDuplicateDetection          : false
+        requiresSession                     : false
+        defaultMessageTimeToLive            : 'P14D'
+        deadLetteringOnMessageExpiration    : true
+        enableBatchedOperations             : true
+        duplicateDetectionHistoryTimeWindow : 'PT10M'
+        maxDeliveryCount                    : 10
+        status                              : 'Active'
+        autoDeleteOnIdle                    : 'P10675199DT2H48M5.4775807S'
+        enablePartitioning                  : false
+        enableExpress                       : false
+}
+}
+
+var testqueue  serviceBusQueue ={
+    queueName                               : 'testqueue'
+    properties: {
+        maxMessageSizeInKilobytes           : 256
+        lockDuration                        : 'PT1M'
+        maxSizeInMegabytes                  : 1024
+        requiresDuplicateDetection          : false
+        requiresSession                     : false
+        defaultMessageTimeToLive            : 'P14D'
+        deadLetteringOnMessageExpiration    : true
+        enableBatchedOperations             : true
+        duplicateDetectionHistoryTimeWindow : 'PT10M'
+        maxDeliveryCount                    : 10
+        status                              : 'Active'
+        autoDeleteOnIdle                    : 'P10675199DT2H48M5.4775807S'
+        enablePartitioning                  : false
+        enableExpress                       : false
+}
+}
+
+param serviceBusNamespaceObject = {
     name                                    : 'sbns-selectors-ae-dev'
     resourceGroup                           : 'rg-shared-ems-dev-ae'
     location                                : location
@@ -135,7 +199,7 @@ param serviceBusObject = {
             name                            : 'Standard'
             tier                            : 'Standard'
         }
-    queues                                  : ['epollmarkoffs']
+    queues                                  : [epollmarkoffsQueue, testqueue]
     roles                                   : [serviceBusDataOwner]
 }
 

@@ -1,10 +1,10 @@
-param ServicebusObject object
+param serviceBusNamespaceObject object
 
 
 resource serviceBusResource 'Microsoft.ServiceBus/namespaces@2025-05-01-preview' = {
-  name                                                  : ServicebusObject.name
-  location                                              : ServicebusObject.location
-  sku                                                   : ServicebusObject.sku
+  name                                                  : serviceBusNamespaceObject.name
+  location                                              : serviceBusNamespaceObject.location
+  sku                                                   : serviceBusNamespaceObject.sku
   properties: {
     platformCapabilities: {
       confidentialCompute: {
@@ -15,8 +15,8 @@ resource serviceBusResource 'Microsoft.ServiceBus/namespaces@2025-05-01-preview'
       maxReplicationLagDurationInSeconds: 0
       locations: [
         {
-          locationName: 'australiaeast'
-          roleType: 'Primary'
+          locationName                                  : 'australiaeast'
+          roleType                                      : 'Primary'
         }
       ]
     }
@@ -57,24 +57,9 @@ resource serviceBusNamespaceNetworkRulesResource 'Microsoft.ServiceBus/namespace
 
 
 resource createServiceBusQueues 'Microsoft.ServiceBus/namespaces/queues@2025-05-01-preview' = [
-    for queueName in ServicebusObject.queues : {
-  parent: serviceBusResource
-  name: queueName  
-  properties: {
-    maxMessageSizeInKilobytes                                     : 256
-    lockDuration                                                  : 'PT1M'
-    maxSizeInMegabytes                                            : 1024
-    requiresDuplicateDetection                                    : false
-    requiresSession                                               : false
-    defaultMessageTimeToLive                                      : 'P14D'
-    deadLetteringOnMessageExpiration                              : ServicebusObject.enableDeadLetterQueue
-    enableBatchedOperations                                       : true
-    duplicateDetectionHistoryTimeWindow                           : 'PT10M'
-    maxDeliveryCount: 10
-    status                                                        : 'Active'
-    autoDeleteOnIdle                                              : 'P10675199DT2H48M5.4775807S'
-    enablePartitioning                                            : false
-    enableExpress                                                 : false
-  }  
+    for currentQueue in serviceBusNamespaceObject.queues : {
+  parent                                                        : serviceBusResource
+  name                                                          : currentQueue.queueName
+  properties                                                    : currentQueue.properties  
 }
 ]

@@ -10,7 +10,7 @@ param storageAccountObject object
 param containerApp object
 param containerAppsEnvironment object
 param appConfigurationObject object
-param serviceBusObject object
+param serviceBusNamespaceObject object
 param keyVaultObject object 
 output storageAccountName string                        = storageAccountObject.name
 output containerAppName string                          = containerApp.name
@@ -47,9 +47,9 @@ module registryContainerModule 'ContainerRegistry/CreateRegistry.bicep' = {
 
 module createServiceBusNamespaceAndQueuesModule 'ServiceBus/CreateServiceBusNamespaceAndQueues.bicep' ={
     name                                                : 'createServiceBusAndQueues'
-    scope                                               : resourceGroup(serviceBusObject.resourceGroup)
+    scope                                               : resourceGroup(serviceBusNamespaceObject.resourceGroup)
     params: {
-        ServicebusObject                                : serviceBusObject
+        serviceBusNamespaceObject                       : serviceBusNamespaceObject
     }
 
 }
@@ -104,9 +104,9 @@ module assignRolesModule 'AssignRoles/AssignRoles.bicep' = if (assignRoleToAppCo
 
 module assignServiceBusRoleModule 'AssignRoles/AssignServiceBusDataOwnerTo.bicep' = {
     name                                                : 'AssignServiceBusRoles'
-    scope                                               : resourceGroup(serviceBusObject.resourceGroup)
+    scope                                               : resourceGroup(serviceBusNamespaceObject.resourceGroup)
     params : {
-        serviceBusObject                                : serviceBusObject
+        serviceBusObject                                : serviceBusNamespaceObject
         principalId                                     : identityModule.outputs.principalId        
     }
 }
