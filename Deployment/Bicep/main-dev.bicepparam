@@ -130,7 +130,8 @@ param serviceBusObject = {
     name                                    : 'sbns-selectors-ae-dev'
     resourceGroup                           : 'rg-shared-ems-dev-ae'
     location                                : location
-     sku: {
+    enableDeadLetterQueue                   : true
+    sku: {
             name                            : 'Standard'
             tier                            : 'Standard'
         }
