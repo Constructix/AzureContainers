@@ -24,6 +24,41 @@ var functionAppName                          = 'caelectordevae'
 param assignRoleToAppConfig                  = false
 param latestImageTag                         = ''
 
+var registryContainerRole RoleValues        = { 
+    id                                      : '7f951dda-4ed3-4680-a7ca-43fe172d538d'
+    name                                    : 'AcrPull'
+}
+var storageAccountBlobRole RoleValues       =  {
+    id                                      : 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+    name                                    : 'Storage Blob Data Contributor'           
+}
+
+var storageAccountQueueRole RoleValues       =  {
+    id                                      : '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
+    name                                    : 'Storage Queue Data Contributor'          
+}
+
+var storageAccountTableRole RoleValues       =  {
+    id                                      : '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
+    name                                    : 'Storage Table Data Contributor'          
+}
+
+var appConfigReaderRole RoleValues          = {
+    id                                      : '516239f1-63e1-4d78-a4de-a74fb236a071'   
+    name                                    : 'App Configuration Data Reader'
+}
+
+var serviceBusDataOwner RoleValues          = {
+    id                                      : '090c5cfd-751d-490a-894a-3ce6f1109419'
+    name                                    : 'Azure Service Bus Data Owner'
+}
+
+var keyVaultSecretuserRole RoleValues       = {         
+     id                                     : '4633458b-17de-408a-b874-0445c86b69e6'
+     name                                   : 'Key Vault Secrets User'
+}
+
+
 
 param workspaceObject = {
   name                                      : 'logemscommondevae'
@@ -47,10 +82,6 @@ param managedIdentityObject = {
   location                                  : location
 }
 
-var registryContainerRole RoleValues        = { 
-    id                                      : '7f951dda-4ed3-4680-a7ca-43fe172d538d'
-    name                                    : 'AcrPull'
-}
 
 param registryContainerObject = {
   name                                      : registryContainerName
@@ -62,12 +93,7 @@ param registryContainerObject = {
     name                                    : 'Basic'
     tier                                    : 'Basic'
   }
-  roles                                     : [ registryContainerRole]
-      // {
-      //     id                                : '7f951dda-4ed3-4680-a7ca-43fe172d538d'
-      //     name                              : 'AcrPull'
-      // }
- 
+  roles                                     : [ registryContainerRole]     
 }
 param storageAccountObject = {
   name                                      : 'stelectoraedev'
@@ -78,20 +104,7 @@ param storageAccountObject = {
     tier                                    : 'Standard'
   }
   kind                                      : 'StorageV2'
-  roles: [
-    {
-      id                                    : 'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
-      name                                  : 'Storage Blob Data Contributor'
-    }
-    {
-      id                                    : '974c5e8b-45b9-4653-ba55-5f855dd0fb88'
-      name                                  : 'Storage Queue Data Contributor'
-    }
-    {
-      id                                    : '0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3'
-      name                                  : 'Storage Table Data Contributor'
-    }
-  ]
+  roles                                     : [ storageAccountBlobRole, storageAccountQueueRole, storageAccountTableRole]  
   tags                                      : tags
 }
 param containerApp = {
@@ -110,39 +123,23 @@ param appConfigurationObject = {
   name                                      : 'apconfig-constructix-ae-dev-01'
   resourceGroup                             : 'rg-constructix-dev-ae-01'
   roleDefinitionId                          : '516239f1-63e1-4d78-a4de-a74fb236a071'
-  roles: [
-    {
-      id                                    : '516239f1-63e1-4d78-a4de-a74fb236a071'
-      name                                  : 'App Configuration Data Reader'
-    }
-  ]
+  roles                                     : [ appConfigReaderRole]
 }
 
 param serviceBusObject = {
-    name                                    : 'sbns-selectorsae-dev'
+    name                                    : 'sbns-selectors-ae-dev'
     resourceGroup                           : 'rg-shared-ems-dev-ae'
     location                                : location
      sku: {
             name                            : 'Standard'
             tier                            : 'Standard'
         }
-    queues: ['neworders']
-    roles: [
-    {
-      id                                    : '090c5cfd-751d-490a-894a-3ce6f1109419'
-      name                                  : 'Azure Service Bus Data Owner'
-    }
-    
-  ]
+    queues                                  : ['epollmarkoffs']
+    roles                                   : [serviceBusDataOwner]
 }
 
 param keyVaultObject = {
     name                                    : 'kvconstructixaedev02'
     resourceGroup                           : 'rg-constructix-dev-ae-01'
-    roles: [
-        {       
-            id                              : '4633458b-17de-408a-b874-0445c86b69e6'
-            name                            : 'Key Vault Secrets User'
-        }
-    ]
+    roles                                   : [ keyVaultSecretuserRole ]
 }
