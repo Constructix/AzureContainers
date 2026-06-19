@@ -1,6 +1,5 @@
 // main.bicep
-param assignRoleToAppConfig bool = false
-param latestImageTag string
+
 param workspaceObject object
 param appInsightsObject object
 param managedIdentityObject object
@@ -88,7 +87,7 @@ module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnv
 
 
 
-module assignRolesModule 'AssignRoles/AssignRoles.bicep' = if (assignRoleToAppConfig) {
+module assignRolesModule 'AssignRoles/AssignRoles.bicep'  {
   name                                                  : 'assignRolesModule'
   scope                                                 : resourceGroup()
   params: {

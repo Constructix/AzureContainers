@@ -55,7 +55,7 @@ builder.Services.AddAzureClients(async clientBuilder =>
     DefaultAzureCredential credential = new DefaultAzureCredential();
     clientBuilder.UseCredential(credential);
 
-    var queueName = "newOrders";
+    var queueName = "epollmarkoffs";
     clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
             provider.GetService(typeof(ServiceBusClient)) switch
             {

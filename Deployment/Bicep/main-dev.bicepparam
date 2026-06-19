@@ -1,6 +1,6 @@
 // create storage account 
 using 'main.bicep'
-
+param latestImageTag                         = ''
 type TagValues = {
     Environment                              : 'DEV'|'Test'|'PREPROD'|'PROD'
     Company                                  : string
@@ -44,8 +44,7 @@ var tags TagValues = {
      Environment                             : 'DEV'
 }
 var functionAppName                          = 'caelectordevae'
-param assignRoleToAppConfig                  = false
-param latestImageTag                         = ''
+
 
 var registryContainerRole RoleValues        = { 
     id                                      : '7f951dda-4ed3-4680-a7ca-43fe172d538d'
