@@ -13,6 +13,7 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 variables:
+  VmImageName: 'ubuntu-latest'
   Solution: 'AzureContainers/src/docker.slnx'
   DOTNETVERSION: '10.x'
 stages:
@@ -22,7 +23,7 @@ stages:
     - job: Build
       displayName: Build
       pool:
-       vmImage: $(vmImage)
+       vmImage: 'VmImageName'
       steps:
         - task: UseDotNet@2
           displayName: 'Install .NET 10'
