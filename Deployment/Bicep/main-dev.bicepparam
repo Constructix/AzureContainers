@@ -1,6 +1,5 @@
 // create storage account 
 using 'main.bicep'
-param latestImageTag                         = ''
 type TagValues = {
     Environment                              : 'DEV'|'Test'|'PREPROD'|'PROD'
     Company                                  : string
