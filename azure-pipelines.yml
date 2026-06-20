@@ -4,16 +4,41 @@
 # https://aka.ms/yaml
 
 trigger:
-- main
-
+  branches:
+    include:
+      - main
+  paths:
+    include: 
+      - AzureContainers/src/**
 pool:
   vmImage: ubuntu-latest
+variables:
+  Solution: 'AzureContainers/src/docker.slnx'
+  DOTNETVERSION: '10.x'
+stages:
+- stage: Build
+  displayName: 'Build & Package Container Code'
+  jobs:
+    - job: Build
+      displayName: Build
+      pool:
+       vmImage: $(vmImage)
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Install .NET 10'
+          inputs:
+            version: '$(DOTNETVERSION)'
+            includePreviewVersions: true
+        - task: DotNetCoreCLI@2
+          displayName: 'Build Solution'
+          inputs:
+           command: 'build'
+           projects: '$(Solution)'
+# steps:
+# - script: echo Hello, world!
+#   displayName: 'Run a one-line script'
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+# - script: |
+#     echo Add other tasks to build, test, and deploy your project.
+#     echo See https://aka.ms/yaml
+#   displayName: 'Run a multi-line script'
