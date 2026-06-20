@@ -87,7 +87,7 @@ module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnv
 
 
 
-module assignRolesModule 'AssignRoles/AssignRoles.bicep'  {
+module assignRolesModule 'AssignRoles/AssignRoles.bicep' = {
   name                                                  : 'assignRolesModule'
   scope                                                 : resourceGroup()
   params: {

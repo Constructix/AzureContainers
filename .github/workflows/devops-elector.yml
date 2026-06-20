@@ -1,0 +1,191 @@
+trigger:
+  branches:
+    include:
+      - master
+  paths:
+    include:
+      - AzureFunctionsInContainers/docker/** 
+      - '*'
+
+resources:
+- repo: self
+
+variables:
+  resourceGroup: 'rg-ems-elector-ae-dev'
+  project: 'AzureFunctionsInContainers/docker/docker.slnx'
+  dockerRegistryServiceConnection: 'constructixDevSvcConn' 
+  imageRepository: 'electorservicesrepository'
+  containerRegistry: 'crelectordevae.azurecr.io'
+  containerRegistryName: 'constructixdockerregistry'
+  containerAppEnvironment: 'funcappenvv1'
+  containerAppName: 'constructixonlineservices'
+  vmImageName         : 'ubuntu-latest'
+
+  # unique image tag per build
+  imageTag: '$(Build.SourceVersion)'
+
+stages:
+# =========================
+# BUILD STAGE
+# =========================
+- stage: Build
+  displayName: Build and package
+  jobs:
+    - job: Build
+      displayName: Build
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Install .NET 10'
+          inputs:
+            version: '10.x'
+            includePreviewVersions: true
+
+        - task: DotNetCoreCLI@2
+          displayName: 'Build solution'
+          inputs:
+            command: 'build'
+            projects: '$(project)'
+
+        - task: CopyFiles@2
+          displayName: 'Copy Bicep files'
+          inputs:
+            sourceFolder: '$(System.DefaultWorkingDirectory)'
+            contents: '**/Bicep/UserAssigned/**'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+        - task: CopyFiles@2
+          displayName: 'Copy AzureFunctionsInContainers files'
+          inputs:
+            sourceFolder: '$(System.DefaultWorkingDirectory)'
+            contents: '**/AzureFunctionsInContainers/**'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish artifacts'
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            ArtifactName: 'drop'
+            publishLocation: Container
+
+# =========================
+# DEPLOY STAGE
+# =========================
+- stage: Deploy_To_Dev
+  displayName: Deploy to DEV
+  dependsOn: Build
+  jobs:
+    - deployment: DeployAzureResourcesAndFunction
+      displayName: Deploy Azure resources and function
+      environment: 'DEV'
+      variables:
+        DevResourceGroup: 'rg-constructix-dev-ae-02'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: PowerShell@2
+                inputs:
+                  targetType: 'inline'
+                  script: |
+                    # Write your PowerShell commands here.                    
+                    Write-Host "CurrentBuild Id: $(Build.BuildNumber)"
+              - task: DownloadPipelineArtifact@2
+                displayName: 'Download build artifacts'
+                inputs:
+                  buildType: current
+                  artifactName: 'drop'
+                  targetPath: '$(Pipeline.Workspace)'
+              - task: AzureCLI@2
+                displayName: 'Provisioning Azure Resources'
+                inputs:
+                  azureSubscription: 'constructixDevSvcConn'
+                  scriptType: 'pscore'           # or 'bash'
+                  scriptLocation: 'scriptPath'
+                  scriptPath: '$(Pipeline.Workspace)/drop/Bicep/UserAssigned/Deploy.ps1'
+                  workingDirectory: '$(Pipeline.Workspace)/drop/Bicep/UserAssigned'   # ← Important
+                  addSpnToEnvironment: true      # Important if your script needs SP details            
+                  failOnStderr: true
+              
+              - task: AzureCLI@2
+                displayName: 'Build and push image to ACR'
+                inputs:
+                  azureSubscription: '$(dockerRegistryServiceConnection)'
+                  scriptType: bash
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    az acr login --name $(containerRegistryName)
+                    IMAGE="$(containerRegistry)/$(imageRepository):$(imageTag)"
+                    docker build \
+                      --no-cache \
+                      -f $(Pipeline.Workspace)/drop/AzureFunctionsInContainers/docker/Dockerfile \
+                      -t $IMAGE \
+                      $(Pipeline.Workspace)/drop/AzureFunctionsInContainers/docker
+
+                    docker push $IMAGE
+              - task: AzureCLI@2
+                displayName: "Get latest ACR tag"
+                inputs:
+                  azureSubscription: $(dockerRegistryServiceConnection)
+                  scriptType: pscore
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    $latestTag = az acr repository show-tags `
+                    --name $(containerRegistryName) `
+                    --repository $(imageRepository) `
+                    --orderby time_desc `
+                    --top 1 `
+                    --output tsv
+                    Write-Host "Latest Tag: $latestTag"
+                    Write-Host "##vso[task.setvariable variable=latestTag]$latestTag"
+
+
+
+              # Deploy to Azure Container Apps
+              - task: AzureContainerApps@1
+                displayName: 'Deploy to Azure Container Apps'
+                inputs:
+                  azureSubscription: $(dockerRegistryServiceConnection)
+                  resourceGroup: $(resourceGroup)
+                  containerAppName: $(containerAppName)
+                  containerAppEnvironment: $(containerAppEnvironment)
+                  imageToDeploy: '$(containerRegistryName).azurecr.io/$(imageRepository):$(latestTag)'
+                  ingress: 'external'
+                  targetPort: '80'
+                  acrName: $(containerRegistryName)
+                 # acrUsername: '$(acrUsername)'
+                 # acrPassword: '$(acrPassword)'
+                  updateContainerApp: true
+
+              # # Force template + scaler metadata to use the new image (Functions-in-ACA quirk)
+              # - task: AzureCLI@2
+              #   displayName: 'Force update ACA template and Functions scaler image'
+              #   inputs:
+              #     azureSubscription: 'constructx-dev-ServiceConnection'
+              #     scriptType: bash
+              #     scriptLocation: inlineScript
+              #     inlineScript: |
+              #       IMAGE="$(containerRegistryName).azurecr.io/$(imageRepository):$(imageTag)"
+              #       APP=$(containerAppName)
+              #       RG=$(DevResourceGroup)
+              #       echo "Applying updated Container App definition..."
+              #       az containerapp update \
+              #         --name $APP \
+              #         --resource-group $RG \
+              #         --patch "{
+              #               \"properties\": {
+              #                 \"template\": {
+              #                   \"containers\": [{
+              #                     \"image\": \"$IMAGE\"
+              #                   }]
+              #                 },
+              #                 \"latestRevisionTemplate\": {
+              #                   \"containers\": [{
+              #                     \"image\": \"$IMAGE\"
+              #                   }]
+              #                 }
+              #               }
+              #             }"
+
+              #       echo "Deployment complete. Image applied: $IMAGE"
