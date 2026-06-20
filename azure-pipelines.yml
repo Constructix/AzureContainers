@@ -14,7 +14,7 @@ pool:
   vmImage: ubuntu-latest
 variables:
   VmImageName: 'ubuntu-latest'
-  Solution: 'AzureContainers/src/dockerDemo.csproj'
+  Solution: 'src/dockerDemo.csproj'
   DOTNETVERSION: '10.x'
 stages:
 - stage: Build
