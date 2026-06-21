@@ -24,4 +24,4 @@ resource workspaceResource 'Microsoft.OperationalInsights/workspaces@2025-07-01'
 
 // Add these two outputs at the end of CreateLogAnalytics.bicep
 output customerId string = workspaceResource.properties.customerId
-output sharedKey string = workspaceResource.listKeys().primarySharedKey
+//output sharedKey string = workspaceResource.listKeys().primarySharedKey

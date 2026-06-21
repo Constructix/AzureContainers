@@ -33,7 +33,7 @@ module logAnalyticsModule 'LogAnalytics/CreateLogAnalytics.bicep' = {
   dependsOn: [createAppInsightsModule]
 }
 output logAnalyticsCustomerId string                    = logAnalyticsModule.outputs.customerId
-output logAnalyticsSharedKey string                     = logAnalyticsModule.outputs.sharedKey
+//output logAnalyticsSharedKey string                     = logAnalyticsModule.outputs.sharedKey
 
 module registryContainerModule 'ContainerRegistry/CreateRegistry.bicep' = {
   name                                                  : 'registryContainerModule'
@@ -73,6 +73,9 @@ module identityModule 'Identity/CreateIdentity.bicep' = {
   } 
 }
 
+resource logAnalyticsResource 'Microsoft.OperationalInsights/workspaces@2025-07-01' existing = {
+  name: workspaceObject.name
+}
 
 module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnvironment.bicep' = {
   name                                                  : 'createDockerContainerEnvionmentModule'
@@ -80,7 +83,7 @@ module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnv
   params: {
     containerAppsEnvironment                            : containerAppsEnvironment
     logAnalyticsCustomerId                              : logAnalyticsModule.outputs.customerId // ← wire in
-    logAnalyticsSharedKey                               : logAnalyticsModule.outputs.sharedKey // ← wire in
+    logAnalyticsSharedKey                               : logAnalyticsResource.listkeys().properties.primarySharedKey //logAnalyticsModule.outputs.sharedKey // ← wire in
   }
   dependsOn:[assignRolesModule]
 }
