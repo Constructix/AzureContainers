@@ -54,4 +54,28 @@ stages:
            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
            ArtifactName: 'drop'
            publishLocation: Container
+- stage: Deploy_To_Dev
+  displayName: 'Deploy_To_Dev'
+  dependsOn: Build_And_Package
+  jobs:
+    - deployment: ProvisionAzureResources
+      displayName: 'Provision Azure Resources'
+      environment: 'DEV'      
+      variables:
+        DevResourceGroup : 'rg-ems-elector-ae-dev'
+      strategy:
+       runOnce:
+         deploy:
+          steps:
+            - task: PowerShell@2
+              inputs:
+                targetType: inline
+                script: |
+                  Write-Host "CurrentBuild Id: $(Build.BuildNumber)"
+            - task: DownloadPipelineArtifact@2
+              displayName: 'Downloading build artifacts'
+              inputs:
+               buildType: current
+               artifactName: 'drop'
+               targetPath: '$(Pipeline.Workspace)'
 
