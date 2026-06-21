@@ -2,7 +2,7 @@ param registryContainerObject object
 param storageAccountObject object
 
 param principalId string
-param identityResourceId string
+
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01' existing = {
   name                                                  : registryContainerObject.name 

@@ -93,8 +93,7 @@ module assignRolesModule 'AssignRoles/AssignRoles.bicep' = {
   params: {
     registryContainerObject                             : registryContainerObject
     storageAccountObject                                : storageAccountObject    
-    principalId                                         : identityModule.outputs.principalId
-    identityResourceId                                  : identityModule.outputs.resourceId
+    principalId                                         : identityModule.outputs.principalId    
   }
   dependsOn: [
     storageAccountModule, identityModule, createServiceBusNamespaceAndQueuesModule
