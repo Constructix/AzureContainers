@@ -35,6 +35,19 @@ stages:
           inputs:
            command: 'build'
            projects: '$(Solution)'
+        # Copy Bicep Files
+        - task: CopyFiles@2
+          displayName: 'Copy Bicep files'
+          inputs:
+            sourceFolder: '$(System.DefaultWorkingDirectory)'
+            contents: '**/Deployment/Bicep/**'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        - task: CopyFiles@2
+          displayName: 'Copy Source Files'
+          inputs:
+           sourceFolder: '$(System.DefaultWorkingDirectory)'
+           contents: '**/src/**'
+           TargetFolder: '$(Build.ArtifactStagingDirectory)'
 # steps:
 # - script: echo Hello, world!
 #   displayName: 'Run a one-line script'
