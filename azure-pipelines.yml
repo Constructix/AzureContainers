@@ -62,10 +62,10 @@ stages:
       displayName: 'Provision Azure Resources'
       environment: 'DEV'      
       variables:
-        AzureSubscription     : 'constructixDevSvcConn'
-        DevResourceGroup      : 'rg-ems-elector-ae-dev'
-        ContainerRepository   : 'crelectordevae'        
-        ImageRepositoryName   : 'electorservicesrepository'
+        AzureSubscription : 'constructixDevSvcConn'
+        DevResourceGroup : 'rg-ems-elector-ae-dev'
+        ContainerRepository : 'crelectordevae'        
+        ImageRepositoryName : 'electorservicesrepository'
         DeployEnv : 'dev'
       strategy:
        runOnce:
