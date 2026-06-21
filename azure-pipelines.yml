@@ -93,7 +93,7 @@ stages:
                 addSpnToEnvironment: true
                 failOnStandardError: true
                 arguments: |
-                  -ResourceGroup $(DevResourceGroup) 
+                  -ResourceGroup $(DevResourceGroup)
                   -ContainerRepository $(ContainerRepository)
                   -DeploymentEnv $(DeployEnv)
                   -RepositoryName  $(ImageRepositoryName)
