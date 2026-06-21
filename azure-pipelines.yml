@@ -48,6 +48,12 @@ stages:
            sourceFolder: '$(System.DefaultWorkingDirectory)'
            contents: '**/src/**'
            TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        - task: PublishBuildArtifacts@1
+          displayName: 'Pubishing Artifacts'
+          inputs:
+           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+           ArtifactName: 'drop'
+           publishLocation: Container
 # steps:
 # - script: echo Hello, world!
 #   displayName: 'Run a one-line script'
