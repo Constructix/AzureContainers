@@ -66,6 +66,7 @@ stages:
         DevResourceGroup      : 'rg-ems-elector-ae-dev'
         ContainerRepository   : 'crelectordevae'        
         ImageRepositoryName   : 'electorservicesrepository'
+        DeployEnv : 'dev'
       strategy:
        runOnce:
          deploy:
@@ -94,6 +95,6 @@ stages:
                 arguments: |
                   -ResourceGroup $(DevResourceGroup) 
                   -ContainerRepository $(ContainerRepository)
-                  -DeploymentEnv 'dev' 
+                  -DeploymentEnv $(DeployEnv)
                   -RepositoryName  $(ImageRepositoryName)
                   	 
