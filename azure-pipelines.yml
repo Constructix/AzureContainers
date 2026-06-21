@@ -17,10 +17,10 @@ variables:
   Solution: 'src/dockerDemo.csproj'
   DOTNETVERSION: '10.x'
 stages:
-- stage: Build
+- stage: Build_And_Package
   displayName: 'Build & Package Container Code'
   jobs:
-    - job: Build
+    - job: Build_and_Package
       displayName: Build
       pool:
        vmImage: 'ubuntu-latest'
@@ -54,11 +54,4 @@ stages:
            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
            ArtifactName: 'drop'
            publishLocation: Container
-# steps:
-# - script: echo Hello, world!
-#   displayName: 'Run a one-line script'
 
-# - script: |
-#     echo Add other tasks to build, test, and deploy your project.
-#     echo See https://aka.ms/yaml
-#   displayName: 'Run a multi-line script'
