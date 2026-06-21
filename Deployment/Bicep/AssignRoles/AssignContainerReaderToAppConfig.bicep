@@ -1,6 +1,6 @@
 param appConfigurationObject object
 param principalId string
-param identityResourceId string
+
 
 resource appConfigurationResource 'Microsoft.AppConfiguration/configurationStores@2024-06-01' existing = {
   name                                                  : appConfigurationObject.name

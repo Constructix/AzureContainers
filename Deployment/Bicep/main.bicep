@@ -117,7 +117,7 @@ module appConfigurationModule 'AssignRoles/AssignContainerReaderToAppConfig.bice
   params: {
     appConfigurationObject                              : appConfigurationObject
     principalId                                         : identityModule.outputs.principalId
-    identityResourceId                                  : identityModule.outputs.resourceId
+    
   }
   dependsOn: [ assignRolesModule]
 }
