@@ -74,7 +74,8 @@ module identityModule 'Identity/CreateIdentity.bicep' = {
 }
 
 resource logAnalyticsResource 'Microsoft.OperationalInsights/workspaces@2025-07-01' existing = {
-  name: workspaceObject.name
+  name                                                  : workspaceObject.name
+  scope                                                 : resourceGroup(workspaceObject.resourceGroup)
 }
 
 module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnvironment.bicep' = {
