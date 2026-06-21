@@ -62,7 +62,10 @@ stages:
       displayName: 'Provision Azure Resources'
       environment: 'DEV'      
       variables:
-        DevResourceGroup : 'rg-ems-elector-ae-dev'
+        AzureSubscription     : 'constructixDevSvcConn'
+        DevResourceGroup      : 'rg-ems-elector-ae-dev'
+        ContainerRepository   : 'crelectordevae'        
+        ImageRepositoryName   : 'electorservicesrepository'
       strategy:
        runOnce:
          deploy:
@@ -78,4 +81,19 @@ stages:
                buildType: current
                artifactName: 'drop'
                targetPath: '$(Pipeline.Workspace)'
-
+            - task: AzureCLI@2
+              displayName: 'Provising Azure Resources'
+              inputs:
+                azureSubscription: 'constructixDevSvcConn'
+                scriptType: pscore
+                scriptLocation: scriptPath
+                scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Deploy.ps1'
+                workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep'
+                addSpnToEnvironment: true
+                failOnStandardError: true
+                arguments: |
+                  -ResourceGroup $(DevResourceGroup) 
+                  -ContainerRepository $(ContainerRepository)
+                  -DeploymentEnv 'dev' 
+                  -RepositoryName  $(ImageRepositoryName)
+                  	 
