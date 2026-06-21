@@ -91,19 +91,14 @@ stages:
                   Write-Host "ContainerRepository=$(ContainerRepository)"
                   Write-Host "DeployEnv=$(DeployEnv)"
                   Write-Host "ImageRepositoryName=$(ImageRepositoryName)"
-            # - task: AzureCLI@2
-            #   displayName: 'Provising Azure Resources'
-            #   inputs:
-            #     azureSubscription: 'constructixDevSvcConn'
-            #     scriptType: pscore
-            #     scriptLocation: scriptPath
-            #     scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Deploy.ps1'
-            #     workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep'
-            #     addSpnToEnvironment: true
-            #     failOnStandardError: true
-            #     arguments: |
-            #       -ResourceGroup $(DevResourceGroup)
-            #       -ContainerRepository $(ContainerRepository)
-            #       -DeploymentEnv $(DeployEnv)
-            #       -RepositoryName  $(ImageRepositoryName)
-                  	 
+            - task: AzureCLI@2
+              displayName: 'Provising Azure Resources'
+              inputs:
+                azureSubscription: 'constructixDevSvcConn'
+                scriptType: pscore
+                scriptLocation: scriptPath
+                scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Deploy.ps1'
+                workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep'
+                arguments: -ResourceGroup $(DevResourceGroup) -ContainerRepository $(ContainerRepository) -DeploymentEnv $(DeployEnv) -RepositoryName $(ImageRepositoryName)
+                addSpnToEnvironment: true
+                failOnStandardError: true
