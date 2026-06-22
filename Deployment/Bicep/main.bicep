@@ -15,14 +15,6 @@ output storageAccountName string                        = storageAccountObject.n
 output containerAppName string                          = containerApp.name
 output workspaceName string                             = workspaceObject.name
 
-module createAppInsightsModule 'AppInsights/createAppInsights.bicep' = {
-  name                                                  : 'createAppInsightsModule'
-  scope                                                 : resourceGroup(appInsightsObject.resourceGroup)
-  params: {
-    workspaceObject                                     : workspaceObject
-    appInsightsObject                                   : appInsightsObject
-  }
-}
 
 module logAnalyticsModule 'LogAnalytics/CreateLogAnalytics.bicep' = {
   name                                                  : 'logAnalyticsModule'
@@ -30,8 +22,19 @@ module logAnalyticsModule 'LogAnalytics/CreateLogAnalytics.bicep' = {
   params: {
     workspaceObject                                     : workspaceObject
   }
-  dependsOn: [createAppInsightsModule]
+  
 }
+
+module createAppInsightsModule 'AppInsights/createAppInsights.bicep' = {
+  name                                                  : 'createAppInsightsModule'
+  scope                                                 : resourceGroup(appInsightsObject.resourceGroup)
+  params: {
+    workspaceObject                                     : workspaceObject
+    appInsightsObject                                   : appInsightsObject
+  }
+  dependsOn:[logAnalyticsModule]
+}
+
 output logAnalyticsCustomerId string                    = logAnalyticsModule.outputs.customerId
 //output logAnalyticsSharedKey string                     = logAnalyticsModule.outputs.sharedKey
 
@@ -78,6 +81,19 @@ resource logAnalyticsResource 'Microsoft.OperationalInsights/workspaces@2025-07-
   scope                                                 : resourceGroup(workspaceObject.resourceGroup)
 }
 
+module assignRolesModule 'AssignRoles/AssignRoles.bicep' = {
+  name                                                  : 'assignRolesModule'
+  scope                                                 : resourceGroup()
+  params: {
+    registryContainerObject                             : registryContainerObject
+    storageAccountObject                                : storageAccountObject    
+    principalId                                         : identityModule.outputs.principalId    
+  }
+  dependsOn: [
+    storageAccountModule, createServiceBusNamespaceAndQueuesModule
+  ]
+}
+
 module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnvironment.bicep' = {
   name                                                  : 'createDockerContainerEnvionmentModule'
   scope                                                 : resourceGroup(containerAppsEnvironment.resourceGroup)
@@ -89,20 +105,6 @@ module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnv
   dependsOn:[assignRolesModule]
 }
 
-
-
-module assignRolesModule 'AssignRoles/AssignRoles.bicep' = {
-  name                                                  : 'assignRolesModule'
-  scope                                                 : resourceGroup()
-  params: {
-    registryContainerObject                             : registryContainerObject
-    storageAccountObject                                : storageAccountObject    
-    principalId                                         : identityModule.outputs.principalId    
-  }
-  dependsOn: [
-    storageAccountModule, identityModule, createServiceBusNamespaceAndQueuesModule
-  ]
-}
 
 module assignServiceBusRoleModule 'AssignRoles/AssignServiceBusDataOwnerTo.bicep' = {
     name                                                : 'AssignServiceBusRoles'

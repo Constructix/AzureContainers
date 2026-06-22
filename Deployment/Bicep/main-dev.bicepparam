@@ -84,7 +84,7 @@ var keyVaultSecretuserRole RoleValues       = {
 param workspaceObject = {
   name                                      : 'logemscommondevae'
   resourceGroup                             : 'rg-monitoring-ems-dev-ae'
-  location                                  : 'AustraliaEast'
+  location                                  : 'australiaeast'
   sku                                       : 'pergb2018'
   tags                                      : tags
 }
