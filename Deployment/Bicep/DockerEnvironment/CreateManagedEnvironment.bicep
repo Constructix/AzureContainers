@@ -5,42 +5,42 @@ param logAnalyticsCustomerId string // ← add this
 param logAnalyticsSharedKey string // ← add this
 
 resource managedEnvironments_dockercontainerdevenvironment_name_resource 'Microsoft.App/managedEnvironments@2025-10-02-preview' = {
-  name: containerAppsEnvironment.name 
-  location: containerAppsEnvironment.location
-  tags: containerAppsEnvironment.tags
+  name                                                  : containerAppsEnvironment.name 
+  location                                              : containerAppsEnvironment.location
+  tags                                                  : containerAppsEnvironment.tags
   identity: {
-    type: 'SystemAssigned'
+    type                                                : 'SystemAssigned'
   }
   properties: {
     appLogsConfiguration: {
-      destination: 'log-analytics'
+      destination                                       : 'log-analytics'
       logAnalyticsConfiguration: {
-        customerId: logAnalyticsCustomerId
-        sharedKey: logAnalyticsSharedKey
-        dynamicJsonColumns: false
+        customerId                                      : logAnalyticsCustomerId
+        sharedKey                                       : logAnalyticsSharedKey
+        dynamicJsonColumns                              : false
       }
     }
-    zoneRedundant: false
-    kedaConfiguration: {}
-    daprConfiguration: {}
-    customDomainConfiguration: {}
+    zoneRedundant                                       : false
+    kedaConfiguration                                   : {}
+    daprConfiguration                                   : {}
+    customDomainConfiguration                           : {}
     workloadProfiles: [
       {
-        workloadProfileType: 'Consumption'
-        name: 'Consumption'
-        enableFips: false
+        workloadProfileType                             : 'Consumption'
+        name                                            : 'Consumption'
+        enableFips                                      : false
       }
     ]
     peerAuthentication: {
       mtls: {
-        enabled: false
+        enabled                                         : false
       }
     }
     peerTrafficConfiguration: {
       encryption: {
-        enabled: false
+        enabled                                         : false
       }
     }
-    publicNetworkAccess: 'Enabled'
+    publicNetworkAccess                                 : 'Enabled'
   }
 }
