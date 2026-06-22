@@ -118,3 +118,12 @@ stages:
                       -t $IMAGE \
                       $(Pipeline.Workspace)/drop/src
                     docker push $IMAGE
+            - task: AzureCLI@2
+              displayName: 'Deploy Container App with Latest Image'
+              inputs:
+                azureSubscription: 'constructixDevScvConn'
+                scriptType: pscore
+                scriptLocation: scriptPath
+                scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container/CreateContainer-deploy-$(DeployEnv).ps1'
+                workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container'
+                arguments: -ResourceGroup $(DevResourceGroup) -$ContainerRegistry $(ContainerRepository) -RepositoryName $(ImageRepositoryName) -Environment $(DeployEnv) 
