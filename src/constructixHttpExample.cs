@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.OpenApi.Models;
+using dockerDemo.Customers.Models;
 
 namespace dockerDemo;
 public class constructixHttpExample
@@ -53,6 +54,8 @@ public class constructixHttpExample
         return response;    
     }
     [Function("GetCustomers")]
+    [OpenApiOperation(operationId: "GetSupppliers", tags: new[] { "Customer" })]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(List<Customer>))]
     public async Task<HttpResponseData> GetCustomers([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
     {
         _logger.LogInformation("C# HTTP trigger function processed a request to get customers.");
@@ -64,6 +67,8 @@ public class constructixHttpExample
     }
 
     [Function("Products")]
+    [OpenApiOperation(operationId: "GetAllProducts", tags: new[] { "Product" })]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(List<Product>))]
     public async Task<HttpResponseData> GetProducts([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
     {
         _logger.LogInformation("Trigger to Retrieve all products from Product service.");
@@ -76,6 +81,8 @@ public class constructixHttpExample
 
 
     [Function("GetQueueName")]
+    [OpenApiOperation(operationId: "GetQueueName", tags: new[] { "QueueDetails" })]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(QueueDetails))]
     public async Task<HttpResponseData> GetQueueName([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)    {
         _logger.LogInformation("C# HTTP trigger function processed a request to get queue name.");
         var queueName = _configuration.GetValue<string>("Constructix.Functions.OrderFunction.SenderQueue") ?? "DefaultQueueName";
@@ -86,6 +93,8 @@ public class constructixHttpExample
     }
 
     [Function("KeyVaultFoodToGo")]
+    [OpenApiOperation(operationId: "GetSubscriptionIdFromKeyVault", tags: new[] { "string" })]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(string))]
     public async Task<HttpResponseData> GetKeyVaultFoodToGoSubscriptionId([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
     {
         _logger.LogInformation("C# HTTP trigger function processed a request to get queue name.");
@@ -99,6 +108,8 @@ public class constructixHttpExample
 
 
     [Function("quotations")]
+    [OpenApiOperation(operationId: "GetAllQuotations", tags: new[] { "Quotations" })]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(List<Quotation>))]
     public async Task<HttpResponseData> GetQuotations([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
     {   
         var response = req.CreateResponse(HttpStatusCode.OK);
@@ -109,6 +120,8 @@ public class constructixHttpExample
     }
 
     [Function("newQuotation")]
+    [OpenApiOperation(operationId: "Create New Quotation", tags: new[] { "NewQuotation" })]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(QuotationAdded))]
     public async Task<HttpResponseData> PostNewQuotation([HttpTrigger(AuthorizationLevel.Anonymous, "post")] HttpRequestData req)
     {
         var newQuotation =await  req.ReadFromJsonAsync<Quotation>();
