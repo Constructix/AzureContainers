@@ -121,7 +121,7 @@ stages:
             - task: AzureCLI@2
               displayName: 'Deploy Container App with Latest Image'
               inputs:
-                azureSubscription: 'constructixDevScvConn'
+                azureSubscription: 'constructixDevSvcConn'
                 scriptType: pscore
                 scriptLocation: scriptPath
                 scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container/CreateContainer-deploy-$(DeployEnv).ps1'
