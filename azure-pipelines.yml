@@ -16,6 +16,7 @@ variables:
   VmImageName: 'ubuntu-latest'
   Solution: 'src/dockerDemo.csproj'
   DOTNETVERSION: '10.x'
+  imageTag: '$(Build.SourceVersion)'
 stages:
 - stage: Build_And_Package
   displayName: 'Build & Package Container Code'
@@ -102,3 +103,18 @@ stages:
                 arguments: -ResourceGroup $(DevResourceGroup) -ContainerRepository $(ContainerRepository) -DeploymentEnv $(DeployEnv) -RepositoryName $(ImageRepositoryName)
                 addSpnToEnvironment: true
                 #failOnStandardError: true # Turnoff the moment.
+            - task: AzureCLI@2
+              displayName: 'Build and Push Image to Container Registry'
+              inputs:
+                azureSubscription: 'constructixDevSvcConn'
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  az acr login --name 'crelectordevae'
+                  IMAGE="$(ContainerRepository)/$(ImageRepositoryName):$(imageTag)"
+                  docker build \
+                    --no-cache \
+                    -f $(Pipeline.Workspace)/drop/src/Dockerfile \
+                      -t $IMAGE \
+                      $(Pipeline.Workspace)/drop/src
+                    docker push $IMAGE
