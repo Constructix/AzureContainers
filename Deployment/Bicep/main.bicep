@@ -44,6 +44,7 @@ module registryContainerModule 'ContainerRegistry/CreateRegistry.bicep' = {
   params: {
     registryContainerObject                             : registryContainerObject
   }
+  dependsOn                                             :[createAppInsightsModule]
 }
 
 
@@ -79,6 +80,7 @@ module identityModule 'Identity/CreateIdentity.bicep' = {
 resource logAnalyticsResource 'Microsoft.OperationalInsights/workspaces@2025-07-01' existing = {
   name                                                  : workspaceObject.name
   scope                                                 : resourceGroup(workspaceObject.resourceGroup)
+  dependsOn                                             :[logAnalyticsModule]
 }
 
 module assignRolesModule 'AssignRoles/AssignRoles.bicep' = {
@@ -89,9 +91,7 @@ module assignRolesModule 'AssignRoles/AssignRoles.bicep' = {
     storageAccountObject                                : storageAccountObject    
     principalId                                         : identityModule.outputs.principalId    
   }
-  dependsOn: [
-    storageAccountModule, createServiceBusNamespaceAndQueuesModule
-  ]
+  dependsOn                                             : [storageAccountModule, createServiceBusNamespaceAndQueuesModule]
 }
 
 module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnvironment.bicep' = {
@@ -102,6 +102,7 @@ module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnv
     logAnalyticsCustomerId                              : logAnalyticsModule.outputs.customerId // ← wire in
     logAnalyticsSharedKey                               : logAnalyticsResource.listkeys().primarySharedKey 
   } 
+  dependsOn                                             :[assignRolesModule, createAppInsightsModule]
 }
 
 
@@ -124,7 +125,7 @@ module appConfigurationModule 'AssignRoles/AssignContainerReaderToAppConfig.bice
     principalId                                         : identityModule.outputs.principalId
     
   }
-  dependsOn: [ assignRolesModule]
+  dependsOn                                             : [ assignRolesModule]
 }
 
 module keyVaultModule  'AssignRoles/AssignKeyVaultReaderRoleToIdentity.bicep' ={
@@ -134,6 +135,7 @@ module keyVaultModule  'AssignRoles/AssignKeyVaultReaderRoleToIdentity.bicep' ={
         keyVaultObject                                  : keyVaultObject
         principalId                                     : identityModule.outputs.principalId
     }
+    dependsOn                                           :[appConfigurationModule]
 }
 
 

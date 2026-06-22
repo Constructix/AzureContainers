@@ -22,5 +22,5 @@ resource appInsightsResource 'Microsoft.Insights/components@2020-02-02' = {
     Application_Type                                    : appInsightsObject.kind        
     WorkspaceResourceId                                 : workspaceResource.id
     IngestionMode                                       : appInsightsObject.ingestMode
-  }  
+  }    
 }
