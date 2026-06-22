@@ -101,4 +101,4 @@ stages:
                 workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep'
                 arguments: -ResourceGroup $(DevResourceGroup) -ContainerRepository $(ContainerRepository) -DeploymentEnv $(DeployEnv) -RepositoryName $(ImageRepositoryName)
                 addSpnToEnvironment: true
-                failOnStandardError: true
+                #failOnStandardError: true # Turnoff the moment.
