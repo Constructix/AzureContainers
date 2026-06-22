@@ -111,7 +111,7 @@ stages:
                 scriptLocation: inlineScript
                 inlineScript: |
                   az acr login --name 'crelectordevae'
-                  IMAGE="$(ContainerRepository)/$(ImageRepositoryName):$(imageTag)"
+                  IMAGE="$$(ContainerRepository).azurecr.io/$(ImageRepositoryName):$(imageTag)"
                   docker build \
                     --no-cache \
                     -f $(Pipeline.Workspace)/drop/src/Dockerfile \
