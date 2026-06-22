@@ -90,11 +90,12 @@ param workspaceObject = {
 }
 param appInsightsObject = {
   name                                      : 'appiemscommondevae'
-  resourceGroup                             : 'rg-monitoring-ems-dev-ae'
-  type                                      : 'web'
+  resourceGroup                             : 'rg-monitoring-ems-dev-ae'  
+  kind                                      : 'web'
   region                                    : 'australiaeast'
   requestSource                             : 'IbizaAIExtension'
   tags                                      : tags
+  ingestMode                                : 'LogAnalytics'
 }
 
 param managedIdentityObject = {
