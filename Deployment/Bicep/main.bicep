@@ -101,8 +101,7 @@ module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnv
     containerAppsEnvironment                            : containerAppsEnvironment
     logAnalyticsCustomerId                              : logAnalyticsModule.outputs.customerId // ← wire in
     logAnalyticsSharedKey                               : logAnalyticsResource.listkeys().primarySharedKey 
-  }
-  dependsOn:[assignRolesModule]
+  } 
 }
 
 
