@@ -25,9 +25,6 @@ var builder = FunctionsApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile(LocalSettings, optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 var appConfigEndpoint = builder.Configuration["AppConfig"];
-
-
-
 // Load App Configuration
 builder.Configuration.AddAzureAppConfiguration(options =>
 {
@@ -54,14 +51,20 @@ builder.Services.AddAzureClients(async clientBuilder =>
     clientBuilder.AddServiceBusClientWithNamespace(sbNameSpace);
     DefaultAzureCredential credential = new DefaultAzureCredential();
     clientBuilder.UseCredential(credential);
+    var queueNamesFromConfig = builder.Configuration["Construcitx.DockerDemo.ServiceBus.Queues"];
 
-    var queueName = "epollmarkoffs";
-    clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
+    var queueNames = queueNamesFromConfig.Split(','); //new string[] { "epollmarkoffs", "testqueue" };
+
+    foreach (var queueName in queueNames)
+    {
+        clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
             provider.GetService(typeof(ServiceBusClient)) switch
             {
-                ServiceBusClient client => client.CreateSender(queueName),
+                ServiceBusClient client => client.CreateSender(queueName.Trim()),
                 _ => throw new InvalidOperationException("Unable to create ServiceBusClient")
-            }).WithName(queueName);
+            }).WithName(queueName.Trim());
+    }
+    
 
 });
 builder.Services.AddSingleton<ICorrelationContextAccessor, CorrelationContextAccessor>();
@@ -72,6 +75,7 @@ SetupServiceData(builder);
 builder.Services.AddApplicationInsightsTelemetryWorkerService();
 // Add Azure App Configuration middleware to the service collection.
 builder.Services.AddAzureAppConfiguration();
+
 // use app config for middleware-> dynamic configuration refresh without redeploying the function app
 builder.UseAzureAppConfiguration();
 

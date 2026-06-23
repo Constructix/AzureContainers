@@ -22,7 +22,7 @@ public class ConstructixServiceBusExample
         ICorrelationContextAccessor correlationContextAccessor,
         ILogger<ConstructixServiceBusExample> logger)
     {
-        _serviceBusClient = senderFactory.CreateClient("newOrders");
+        _serviceBusClient = senderFactory.CreateClient("epollmarkoffs");
         _correlationContextAccessor = correlationContextAccessor;
         _logger = logger;
 
