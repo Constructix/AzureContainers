@@ -6,9 +6,11 @@ using dockerDemo.ServiceBus.Accessors;
 using Microsoft.AspNetCore.SignalR.Protocol;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Client.ManagedIdentity;
+using System.Net;
 using System.Text;
 namespace dockerDemo.ServiceBus;
 
@@ -29,6 +31,8 @@ public class ConstructixServiceBusExample
     }
 
     [Function("NewOrder")]
+    [OpenApiOperation(operationId: "NewOrder", tags: new[] { "string" })]
+    [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(newOrderResponse))]
     public async Task<HttpResponseData> ReceiveNewOrderMessagFunction([HttpTrigger(AuthorizationLevel.Anonymous, "Post")] HttpRequestData requestData,
                                                                         FunctionContext context,
                                                                         CancellationToken cancellationToken)
