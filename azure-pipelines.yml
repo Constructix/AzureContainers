@@ -43,44 +43,44 @@ stages:
         - powershell: npm i -g azure-functions-core-tools@4 --unsafe-perm true
           displayName: 'Install Azure functions core tools'
         - powershell: |
-            # Start the function app
+            Write-Host "Starting Azure Functions host..."
             $proc = Start-Process -FilePath "func" -ArgumentList "start --port 7071" -PassThru -NoNewWindow
             Write-Host "Waiting for function app to start..."
-            # Wait for the endpoint to become available and download the spec
-            # Wait for the endpoint to become available
             $maxRetries = 30
             $retryDelay = 2
             $specDownloaded = $false
-    
+
             for ($i = 1; $i -le $maxRetries; $i++) {
                 try {
-                  $response = Invoke-WebRequest -Uri "http://localhost:7071/api/swagger.json" -UseBasicParsing -TimeoutSec 5
+                    $response = Invoke-WebRequest -Uri "http://localhost:7071/api/swagger.json" -UseBasicParsing -TimeoutSec 5
                     if ($response.StatusCode -eq 200) {
-                      $response.Content | Out-File -FilePath "swagger.json" -Encoding utf8
-                      Write-Host "✅ Successfully downloaded swagger.json (attempt $i)"
-                      $specDownloaded = $true
-                      break
-                  }
-              }
-              catch {
-                  Write-Host "⏳ Attempt $i/$maxRetries failed. Waiting $retryDelay seconds..."
-                  Start-Sleep -Seconds $retryDelay
+                        $response.Content | Out-File -FilePath "swagger.json" -Encoding utf8
+                        Write-Host "✅ Successfully downloaded swagger.json"
+                        $specDownloaded = $true
+                        break
+                    }
+                }
+                catch {
+                    Write-Host "⏳ Attempt $i/$maxRetries failed. Waiting $retryDelay seconds..."
+                    Start-Sleep -Seconds $retryDelay
                 }
             }
-    
-            # Stop the function process
-            if ($process -and !$process.HasExited) {
-              Stop-Process -Id $process.Id -Force
-              Write-Host "Stopped function app process"
+
+            # Cleanup
+            if ($proc -and !$proc.HasExited) {
+                Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+                Write-Host "Stopped function app process"
             }
-    
+
             if (-not $specDownloaded) {
-              throw "❌ Failed to download swagger.json after $maxRetries attempts" }    
-            # Prepare artifact directory
-            New-Item -ItemType Directory -Force -Path "$(Build.ArtifactStagingDirectory)/api-spec" -ErrorAction SilentlyContinue | Out-Null
-            Copy-Item "swagger.json" -Destination "$(Build.ArtifactStagingDirectory)/api-spec/swagger.json" -Force        
+                throw "❌ Failed to download swagger.json after $maxRetries attempts"
+            }
+
+            # Publish artifact
+            New-Item -ItemType Directory -Force -Path "$(Build.ArtifactStagingDirectory)/api-spec" | Out-Null
+            Copy-Item "swagger.json" -Destination "$(Build.ArtifactStagingDirectory)/api-spec/swagger.json" -Force
             Write-Host "✅ OpenAPI document ready for publishing"
-            displayName: 'Generate OpenAPI Document'
+          displayName: 'Generate OpenAPI Document'
           
         - task: CopyFiles@2
           displayName: 'Copy Bicep files'
