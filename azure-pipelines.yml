@@ -126,4 +126,4 @@ stages:
                 scriptLocation: scriptPath
                 scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container/CreateContainer-deploy-$(DeployEnv).ps1'
                 workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container'
-                arguments: -ResourceGroup $(DevResourceGroup) -$ContainerRegistry $(ContainerRepository) -RepositoryName $(ImageRepositoryName) -Environment $(DeployEnv) 
+                arguments: -ResourceGroup $(DevResourceGroup) -ContainerRegistry $(ContainerRepository) -RepositoryName $(ImageRepositoryName) -Environment $(DeployEnv) 
