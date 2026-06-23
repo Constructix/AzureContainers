@@ -11,3 +11,5 @@
 *.sqlite
 /Deployment/Bicep/.vs/Bicep.slnx/v18/.wsuo
 *.wsuo
+/DockerDemo.Tests/bin
+/DockerDemo.Tests/obj
