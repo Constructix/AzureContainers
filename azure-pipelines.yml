@@ -148,20 +148,20 @@ stages:
         
               Invoke-RestMethod -Method Get -Uri "http://localhost:7071/api/openapi/v3.json" |
                 ConvertTo-Json -Depth 100 |
-                Out-File -FilePath "$(Build.ArtifactStagingDirectory)/openapi.json" -Force
+                Out-File -FilePath "$(Build.ArtifactStagingDirectory)/openapi/openapi.json" -Force
          - task: CopyFiles@2
           displayName: 'Copy Bicep files'
           inputs:
-            sourceFolder: '$(System.DefaultWorkingDirectory)'
-            contents: '**/Bicep/UserAssigned/**'
-            TargetFolder: '$(Build.ArtifactStagingDirectory)'
+            sourceFolder: '$(System.DefaultWorkingDirectory)/Bicep/UserAssigned'
+            contents: '**'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)/Deployment'
 
         - task: CopyFiles@2
           displayName: 'Copy AzureFunctionsInContainers files'
           inputs:
-            sourceFolder: '$(System.DefaultWorkingDirectory)'
-            contents: '**/AzureFunctionsInContainers/**'
-            TargetFolder: '$(Build.ArtifactStagingDirectory)'
+            sourceFolder: '$(System.DefaultWorkingDirectory)/AzureFunctionsInContainers/docker'
+            contents: '**'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)/src'
 
         - task: PublishBuildArtifacts@1
           displayName: 'Publish artifacts'
