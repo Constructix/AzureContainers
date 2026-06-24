@@ -58,7 +58,7 @@ if (!skipAppConfig)
 // constructor dependency, and that dependency must resolve at function-indexing time even
 // when no HTTP request is ever made - so this registration cannot be skipped without breaking
 // host startup for any function whose constructor requests a Service Bus client.
-builder.Services.AddAzureClients(async clientBuilder =>
+builder.Services.AddAzureClients(clientBuilder =>
 {    
     var sbNameSpace = builder.Configuration["Constructix.DockerDemo.ServiceBusNamespace"];
 
