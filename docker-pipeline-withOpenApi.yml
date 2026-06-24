@@ -1,0 +1,238 @@
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include: 
+      - AzureContainers/src/**
+pool:
+  vmImage: ubuntu-latest
+variables:
+  VmImageName: 'ubuntu-latest'
+  Solution: 'src/dockerDemo.csproj'
+  DOTNETVERSION: '10.x'
+  imageTag: '$(Build.SourceVersion)'
+stages:
+- stage: Build_And_Package
+  displayName: 'Build & Package Container Code'
+  jobs:
+    - job: Build_and_Package
+      displayName: Build
+      pool:
+       vmImage: 'ubuntu-latest'
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Install .NET 10'
+          inputs:
+            version: '$(DOTNETVERSION)'
+            includePreviewVersions: true        
+        - task: DotNetCoreCLI@2
+          displayName: 'Build Solution'
+          inputs:
+           command: 'build'
+           projects: '$(Solution)'           
+           arguments: '-c Release'
+        - task: UseDotNet@2
+          inputs:
+            packageType: sdk
+            version: '$(DOTNETVERSION)'
+        - task: PowerShell@2
+          displayName: 'Install Azure Functions Core Tools'
+          inputs:
+            targetType: 'inline'
+            pwsh: true
+            script: |
+              npm install -g azure-functions-core-tools@4 --unsafe-perm true
+        - task: PowerShell@2
+          displayName: 'Generate OpenAPI document'
+          inputs:
+            targetType: 'inline'
+            pwsh: true
+            script: |
+              npm install -g azurite
+        
+              Start-Process -NoNewWindow -FilePath "azurite" `
+                -ArgumentList @("--silent", "--location", "$(Agent.TempDirectory)/azurite", "--debug", "$(Agent.TempDirectory)/azurite/debug.log") `
+                -RedirectStandardOutput "$(Agent.TempDirectory)/azurite-stdout.log" `
+                -RedirectStandardError "$(Agent.TempDirectory)/azurite-stderr.log"
+        
+              # Poll until Azurite's blob endpoint is actually listening
+              $maxAttempts = 12
+              $attempt = 0
+              $ready = $false
+              do {
+                  Start-Sleep -Seconds 2
+                  $attempt++
+                  try {
+                      $tcp = New-Object System.Net.Sockets.TcpClient
+                      $tcp.Connect("127.0.0.1", 10000)
+                      if ($tcp.Connected) { $ready = $true; $tcp.Close() }
+                  } catch { }
+              } while (-not $ready -and $attempt -lt $maxAttempts)
+        
+              if (-not $ready) {
+                  Write-Host "---- azurite-stdout.log ----"
+                  Get-Content "$(Agent.TempDirectory)/azurite-stdout.log" -ErrorAction SilentlyContinue
+                  Write-Host "---- azurite-stderr.log ----"
+                  Get-Content "$(Agent.TempDirectory)/azurite-stderr.log" -ErrorAction SilentlyContinue
+                  Write-Error "Azurite did not become ready in time"
+                  exit 1
+              }
+        
+              Write-Host "Azurite is up and listening on port 10000"
+        
+              # Navigate directly to the built binaries folder
+              cd "$(Build.SourcesDirectory)/src/bin/Release/net10.0"
+        
+              # local.settings.json keeps EVERY key your Program.cs reads via literal dotted
+              # IConfiguration["..."] lookups. Dotted keys here are NOT the same as the
+              # double-underscore env var convention (Constructix__DockerDemo__...), which maps
+              # to a hierarchical "Constructix:DockerDemo:..." key instead - a different key
+              # entirely from the literal "Constructix.DockerDemo.ServiceBusNamespace" string
+              # your code indexes by. Keeping these as JSON keys avoids that mismatch.
+              # NOTE: ServiceBusNamespace is the BARE hostname, no "https://" scheme - that
+              # value is passed straight into AddServiceBusClientWithNamespace(), which expects
+              # just the fully qualified namespace, not a URL.
+              @'
+              {
+                "IsEncrypted": false,
+                "Values": {
+                  "AzureWebJobsStorage": "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;",
+                  "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+                  "SkipAppConfig": "true",
+                  "Constructix.DockerDemo.ServiceBusNamespace": "sbns-selectors-ae-dev.servicebus.windows.net",
+                  "Constructix.DockerDemo.ServiceBus.Queues": "epollmarkoffs",
+                  "APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=00000000-0000-0000-0000-000000000000"
+                }
+              }
+              '@ | Out-File -FilePath local.settings.json -Encoding utf8 -Force
+        
+              Write-Host "---- local.settings.json content on disk ----"
+              Get-Content local.settings.json -Raw
+              Write-Host "---- end local.settings.json ----"
+        
+              $env:OpenApi__HostNames = "https://apim-electordevae.azure-api.net/elector"
+        
+              # Start the function host
+              Start-Process -NoNewWindow -FilePath "func" `
+                -ArgumentList @("start", "--port", "7071", "--verbose") `
+                -RedirectStandardOutput "func-stdout.log" `
+                -RedirectStandardError "func-stderr.log"
+        
+              # Poll instead of a fixed sleep
+              $maxAttempts = 24
+              $attempt = 0
+              $ready = $false
+              do {
+                  Start-Sleep -Seconds 5
+                  $attempt++
+                  try {
+                      $response = Invoke-WebRequest -Uri "http://localhost:7071/api/openapi/v3.json" -UseBasicParsing -TimeoutSec 5
+                      if ($response.StatusCode -eq 200) { $ready = $true; break }
+                  } catch { }
+              } while ($attempt -lt $maxAttempts)
+        
+              if (-not $ready) {
+                  Write-Host "---- func-stdout.log ----"
+                  Get-Content func-stdout.log -ErrorAction SilentlyContinue
+                  Write-Host "---- func-stderr.log ----"
+                  Get-Content func-stderr.log -ErrorAction SilentlyContinue
+                  Write-Error "Function host did not become ready in time"
+                  exit 1
+              }
+        
+              Invoke-RestMethod -Method Get -Uri "http://localhost:7071/api/openapi/v3.json" |
+                ConvertTo-Json -Depth 100 |
+                Out-File -FilePath "$(Build.ArtifactStagingDirectory)/openapi.json" -Force
+        - task: CopyFiles@2
+          displayName: 'Copy Bicep files'
+          inputs:
+            sourceFolder: '$(Build.SourcesDirectory)/Bicep/UserAssigned'
+            contents: '**'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)/Deployment'
+
+        - task: CopyFiles@2
+          displayName: 'Copy AzureFunctionsInContainers files'
+          inputs:
+            sourceFolder: '$(Build.SourcesDirectory)/AzureFunctionsInContainers/docker'
+            contents: '**'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)/src'
+
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish artifacts'
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+            ArtifactName: 'drop'
+            publishLocation: Container
+- stage: Deploy_To_Dev
+  displayName: 'Deploy_To_Dev'
+  dependsOn: Build_And_Package
+  jobs:
+    - deployment: ProvisionAzureResources
+      displayName: 'Provision Azure Resources'
+      environment: 'DEV'      
+      variables:
+        AzureSubscription : 'constructixDevSvcConn'
+        DevResourceGroup : 'rg-ems-elector-ae-dev'
+        ContainerRepository : 'crelectordevae'        
+        ImageRepositoryName : 'electorservicesrepository'
+        DeployEnv : 'dev'
+      strategy:
+       runOnce:
+         deploy:
+          steps:
+            - task: PowerShell@2
+              inputs:
+                targetType: inline
+                script: |
+                  Write-Host "CurrentBuild Id: $(Build.BuildNumber)"
+            - task: DownloadPipelineArtifact@2
+              displayName: 'Downloading build artifacts'
+              inputs:
+               buildType: current
+               artifactName: 'drop'
+               targetPath: '$(Pipeline.Workspace)'
+            - task: PowerShell@2
+              displayName: 'Debug variables'
+              inputs:
+                targetType: inline
+                script: |
+                  Write-Host "DevResourceGroup=$(DevResourceGroup)"
+                  Write-Host "ContainerRepository=$(ContainerRepository)"
+                  Write-Host "DeployEnv=$(DeployEnv)"
+                  Write-Host "ImageRepositoryName=$(ImageRepositoryName)"
+            - task: AzureCLI@2
+              displayName: 'Provising Azure Resources'
+              inputs:
+                azureSubscription: 'constructixDevSvcConn'
+                scriptType: pscore
+                scriptLocation: scriptPath
+                scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Deploy.ps1'
+                workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep'
+                arguments: -ResourceGroup $(DevResourceGroup) -ContainerRepository $(ContainerRepository) -DeploymentEnv $(DeployEnv) -RepositoryName $(ImageRepositoryName)
+                addSpnToEnvironment: true
+                #failOnStandardError: true # Turnoff the moment.
+            - task: AzureCLI@2
+              displayName: 'Build and Push Image to Container Registry'
+              inputs:
+                azureSubscription: 'constructixDevSvcConn'
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  az acr login --name 'crelectordevae'
+                  IMAGE='$(ContainerRepository).azurecr.io/$(ImageRepositoryName):$(imageTag)'
+                  docker build \
+                    --no-cache \
+                    -f $(Pipeline.Workspace)/drop/src/Dockerfile \
+                      -t $IMAGE \
+                      $(Pipeline.Workspace)/drop/src
+                    docker push $IMAGE
+            - task: AzureCLI@2
+              displayName: 'Deploy Container App with Latest Image'
+              inputs:
+                azureSubscription: 'constructixDevSvcConn'
+                scriptType: pscore
+                scriptLocation: scriptPath
+                scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container/CreateContainer-deploy-$(DeployEnv).ps1'
+                workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container'
+                arguments: -ResourceGroup $(DevResourceGroup) -ContainerRegistry $(ContainerRepository) -RepositoryName $(ImageRepositoryName) -Environment $(DeployEnv) 
