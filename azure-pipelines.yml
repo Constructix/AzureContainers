@@ -49,7 +49,7 @@ stages:
             script: |
               npm install -g azure-functions-core-tools@4 --unsafe-perm true
         - task: PowerShell@2
-          displayName: 'Install and start Azurite'
+          displayName: 'Generate OpenAPI document'
           inputs:
             targetType: 'inline'
             pwsh: true
@@ -84,14 +84,7 @@ stages:
                   exit 1
               }
 
-              Write-Host "Azurite is up and listening on port 10000"            
-              
-        - task: PowerShell@2
-          displayName: 'Generate OpenAPI document'
-          inputs:
-            targetType: 'inline'
-            pwsh: true
-            script: |
+              Write-Host "Azurite is up and listening on port 10000"
               try {
                 $tcp = New-Object System.Net.Sockets.TcpClient
                 $tcp.Connect("127.0.0.1", 10000)
