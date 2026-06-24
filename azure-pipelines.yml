@@ -49,33 +49,25 @@ stages:
             script: |
               cd $(System.DefaultWorkingDirectory)/src/bin/Release/net10.0
 
-              # Start the function host in background
-              Start-Process -NoNewWindow -FilePath "func" -ArgumentList @("start", "--verbose", "false")
+              # func start needs this file to exist even with dummy values for doc generation
+              @'
+              {
+                "IsEncrypted": false,
+                "Values": {
+                  "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+                  "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
+                }
+              }
+              '@ | Out-File -FilePath local.settings.json -Encoding utf8
 
-              # Give it time to spin up - adjust based on cold start in your pipeline
+              $env:OpenApi__HostNames = "https://apim-electordevae.azure-api.net/elector"
+
+              Start-Process -NoNewWindow -FilePath "func" -ArgumentList @("start", "--verbose", "false")
               Start-Sleep -Seconds 45
 
-              # Pull the v3 doc using the correct enum-based route
-              Invoke-RestMethod -Method Get -Uri http://localhost:7134/api/openapi/v3.json |
+              Invoke-RestMethod -Method Get -Uri http://localhost:7071/api/openapi/v3.json |
                 ConvertTo-Json -Depth 100 |
-                Out-File -FilePath $(Build.ArtifactStagingDirectory)/openapi.json -Force
-
-              Get-Content -Path $(Build.ArtifactStagingDirectory)/openapi.json -Raw
-                # commented out for the moment, To enable openAPI specs to be updated to APIM need to run this at runtime.     
-                # - powershell: |
-                #     Write-Host "Generating OpenAPI document using Azure Functions OpenAPI tools..."
-                #     # Download the generation helper script
-                #     Invoke-WebRequest -Uri "https://aka.ms/azfunc-openapi/generate-openapi.ps1" -OutFile "generate-openapi.ps1"
-
-                #     # Run generation (adjust path and endpoint if needed)
-                #     ./generate-openapi.ps1 `
-                #       -FunctionAppPath "." `
-                #       -BaseUri "http://localhost:7071" `
-                #       -Endpoint "/api/openapi/v3.json" `     # or "/api/swagger.json"
-                #       -OutputPath "$(Build.ArtifactStagingDirectory)/api-spec"
-
-                #     Write-Host "✅ OpenAPI document generated"
-                #   displayName: 'Generate OpenAPI Document'
+                  Out-File -FilePath $(Build.ArtifactStagingDirectory)/openapi.json -Force                
         - task: PublishBuildArtifacts@1
           displayName: 'Publish OpenAPI artifact'
           inputs:
