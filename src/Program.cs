@@ -50,15 +50,22 @@ if (!skipAppConfig)
     });
 
 }
+// NOTE: this block always runs, including when SkipAppConfig=true.
+// AddServiceBusClientWithNamespace(...) and client.CreateSender(...) only build in-memory
+// client objects - they do not open a network connection or authenticate. The real connection
+// is only opened on the first SendMessageAsync/ReceiveMessagesAsync call. Function classes
+// (e.g. ConstructixServiceBusExample) take IAzureClientFactory<ServiceBusSender> as a
+// constructor dependency, and that dependency must resolve at function-indexing time even
+// when no HTTP request is ever made - so this registration cannot be skipped without breaking
+// host startup for any function whose constructor requests a Service Bus client.
 builder.Services.AddAzureClients(async clientBuilder =>
-{
-    if (skipAppConfig) return;
+{    
     var sbNameSpace = builder.Configuration["Constructix.DockerDemo.ServiceBusNamespace"];
 
     clientBuilder.AddServiceBusClientWithNamespace(sbNameSpace);
     DefaultAzureCredential credential = new DefaultAzureCredential();
     clientBuilder.UseCredential(credential);
-    var queueNamesFromConfig = builder.Configuration["Construcitx.DockerDemo.ServiceBus.Queues"];
+    var queueNamesFromConfig = builder.Configuration["Constructix.DockerDemo.ServiceBus.Queues"];
     var queueNames = queueNamesFromConfig.Split(','); 
     foreach (var queueName in queueNames)
     {
