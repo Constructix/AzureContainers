@@ -15,13 +15,13 @@ using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-
+using Microsoft.OpenApi.Models;
 using Microsoft.Azure.Functions.Worker.Extensions.OpenApi.Extensions;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Abstractions;
+using dockerDemo.OpenApi;
 
 const string LocalSettings = "local.settings.json";
 var builder = FunctionsApplication.CreateBuilder(args);
-
-
 builder.Configuration.AddJsonFile(LocalSettings, optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 var appConfigEndpoint = builder.Configuration["AppConfig"];
@@ -78,6 +78,9 @@ builder.Services.AddAzureAppConfiguration();
 
 // use app config for middleware-> dynamic configuration refresh without redeploying the function app
 builder.UseAzureAppConfiguration();
+builder.Services.AddSingleton<IOpenApiConfigurationOptions, OpenApiConfigurationOptions>();
+// openAPI
+
 
 // Configure the Functions Worker (NO ASP.NET Core)
 //builder.ConfigureFunctionsWorkerDefaults();

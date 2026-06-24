@@ -54,7 +54,7 @@ public class constructixHttpExample
         return response;    
     }
     [Function("GetCustomers")]
-    [OpenApiOperation(operationId: "GetSupppliers", tags: new[] { "Customer" })]
+    [OpenApiOperation(operationId: "GetCustomers", tags: new[] { "Customer" })]
     [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(List<Customer>))]
     public async Task<HttpResponseData> GetCustomers([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
     {

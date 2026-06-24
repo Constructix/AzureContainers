@@ -39,39 +39,40 @@ stages:
         - task: UseDotNet@2
           inputs:
             packageType: sdk
-            version: '$(DOTNETVERSION)'        
-        - powershell: |
-            Write-Host "Generating OpenAPI document using Azure Functions OpenAPI tools..."
-            # Download the generation helper script
-            Invoke-WebRequest -Uri "https://aka.ms/azfunc-openapi/generate-openapi.ps1" -OutFile "generate-openapi.ps1"
+            version: '$(DOTNETVERSION)'
+        # commented out for the moment, To enable openAPI specs to be updated to APIM need to run this at runtime.     
+        # - powershell: |
+        #     Write-Host "Generating OpenAPI document using Azure Functions OpenAPI tools..."
+        #     # Download the generation helper script
+        #     Invoke-WebRequest -Uri "https://aka.ms/azfunc-openapi/generate-openapi.ps1" -OutFile "generate-openapi.ps1"
 
-            # Run generation (adjust path and endpoint if needed)
-            ./generate-openapi.ps1 `
-              -FunctionAppPath "." `
-              -BaseUri "http://localhost:7071" `
-              -Endpoint "/api/openapi/v3.json" `     # or "/api/swagger.json"
-              -OutputPath "$(Build.ArtifactStagingDirectory)/api-spec"
+        #     # Run generation (adjust path and endpoint if needed)
+        #     ./generate-openapi.ps1 `
+        #       -FunctionAppPath "." `
+        #       -BaseUri "http://localhost:7071" `
+        #       -Endpoint "/api/openapi/v3.json" `     # or "/api/swagger.json"
+        #       -OutputPath "$(Build.ArtifactStagingDirectory)/api-spec"
 
-            Write-Host "✅ OpenAPI document generated"
-          displayName: 'Generate OpenAPI Document'
-        - task: CopyFiles@2
-          displayName: 'Copy Bicep files'
-          inputs:
-            sourceFolder: '$(System.DefaultWorkingDirectory)'
-            contents: '**/Deployment/Bicep/**'
-            TargetFolder: '$(Build.ArtifactStagingDirectory)'
-        - task: CopyFiles@2
-          displayName: 'Copy Source Files'
-          inputs:
-           sourceFolder: '$(System.DefaultWorkingDirectory)'
-           contents: '**/src/**'
-           TargetFolder: '$(Build.ArtifactStagingDirectory)'
-        - task: PublishBuildArtifacts@1
-          displayName: 'Pubishing Artifacts'
-          inputs:
-           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-           ArtifactName: 'drop'
-           publishLocation: Container
+        #     Write-Host "✅ OpenAPI document generated"
+        #   displayName: 'Generate OpenAPI Document'
+        # - task: CopyFiles@2
+        #   displayName: 'Copy Bicep files'
+        #   inputs:
+        #     sourceFolder: '$(System.DefaultWorkingDirectory)'
+        #     contents: '**/Deployment/Bicep/**'
+        #     TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        # - task: CopyFiles@2
+        #   displayName: 'Copy Source Files'
+        #   inputs:
+        #    sourceFolder: '$(System.DefaultWorkingDirectory)'
+        #    contents: '**/src/**'
+        #    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        # - task: PublishBuildArtifacts@1
+        #   displayName: 'Pubishing Artifacts'
+        #   inputs:
+        #    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        #    ArtifactName: 'drop'
+        #    publishLocation: Container
 - stage: Deploy_To_Dev
   displayName: 'Deploy_To_Dev'
   dependsOn: Build_And_Package
