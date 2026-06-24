@@ -47,7 +47,7 @@ stages:
             targetType: 'inline'
             pwsh: true
             script: |
-              cd $(System.DefaultWorkingDirectory)/bin/Release/net10.0
+              cd $(System.DefaultWorkingDirectory)/src/bin/Release/net10.0
 
               # Start the function host in background
               Start-Process -NoNewWindow -FilePath "func" -ArgumentList @("start", "--verbose", "false")
@@ -76,6 +76,11 @@ stages:
 
                 #     Write-Host "✅ OpenAPI document generated"
                 #   displayName: 'Generate OpenAPI Document'
+        - task: PublishBuildArtifacts@1
+          displayName: 'Publish OpenAPI artifact'
+          inputs:
+            PathtoPublish: '$(Build.ArtifactStagingDirectory)/openapi.json'
+            ArtifactName: 'openapi-spec'
         - task: CopyFiles@2
           displayName: 'Copy Bicep files'
           inputs:
