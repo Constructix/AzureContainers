@@ -24,37 +24,42 @@ const string LocalSettings = "local.settings.json";
 var builder = FunctionsApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile(LocalSettings, optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
-var appConfigEndpoint = builder.Configuration["AppConfig"];
-// Load App Configuration
-builder.Configuration.AddAzureAppConfiguration(options =>
+
+// this is used to generate openapi, SkipAppConfig should not be set anyway but in build pipeline.
+var skipAppConfig = string.Equals(builder.Configuration["SkipAppConfig"], "true", StringComparison.OrdinalIgnoreCase);
+if (!skipAppConfig)
 {
-    Uri endpoint = new Uri(uriString: appConfigEndpoint);
-    options.Connect(endpoint, new DefaultAzureCredential())
-            .ConfigureKeyVault(kv =>
-            {
-                
-                kv.SetCredential(new DefaultAzureCredential());
-            })
-           .Select(KeyFilter.Any, LabelFilter.Null)
-           .ConfigureRefresh(refreshOptions =>
-           {
-               refreshOptions.RegisterAll();
-           });
+    var appConfigEndpoint = builder.Configuration["AppConfig"];
+    // Load App Configuration
+    builder.Configuration.AddAzureAppConfiguration(options =>
+    {
+        Uri endpoint = new Uri(uriString: appConfigEndpoint);
+        options.Connect(endpoint, new DefaultAzureCredential())
+                .ConfigureKeyVault(kv =>
+                {
 
-    
-});
+                    kv.SetCredential(new DefaultAzureCredential());
+                })
+               .Select(KeyFilter.Any, LabelFilter.Null)
+               .ConfigureRefresh(refreshOptions =>
+               {
+                   refreshOptions.RegisterAll();
+               });
 
+
+    });
+
+}
 builder.Services.AddAzureClients(async clientBuilder =>
 {
+    if (skipAppConfig) return;
     var sbNameSpace = builder.Configuration["Constructix.DockerDemo.ServiceBusNamespace"];
 
     clientBuilder.AddServiceBusClientWithNamespace(sbNameSpace);
     DefaultAzureCredential credential = new DefaultAzureCredential();
     clientBuilder.UseCredential(credential);
     var queueNamesFromConfig = builder.Configuration["Construcitx.DockerDemo.ServiceBus.Queues"];
-
-    var queueNames = queueNamesFromConfig.Split(','); //new string[] { "epollmarkoffs", "testqueue" };
-
+    var queueNames = queueNamesFromConfig.Split(','); 
     foreach (var queueName in queueNames)
     {
         clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
@@ -74,19 +79,16 @@ SetupServiceData(builder);
 
 builder.Services.AddApplicationInsightsTelemetryWorkerService();
 // Add Azure App Configuration middleware to the service collection.
-builder.Services.AddAzureAppConfiguration();
-
-// use app config for middleware-> dynamic configuration refresh without redeploying the function app
-builder.UseAzureAppConfiguration();
+if (!skipAppConfig)
+{
+    builder.Services.AddAzureAppConfiguration();
+    // use app config for middleware-> dynamic configuration refresh without redeploying the function app
+    builder.UseAzureAppConfiguration();
+}
 builder.Services.AddSingleton<IOpenApiConfigurationOptions, OpenApiConfigurationOptions>();
-// openAPI
-
 
 // Configure the Functions Worker (NO ASP.NET Core)
 //builder.ConfigureFunctionsWorkerDefaults();
-
-
-
 
 // Build and run
 builder.Build().Run();
