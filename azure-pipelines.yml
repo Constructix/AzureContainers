@@ -42,6 +42,13 @@ stages:
             packageType: sdk
             version: '$(DOTNETVERSION)'
         - task: PowerShell@2
+          displayName: 'Install Azure Functions Core Tools'
+          inputs:
+            targetType: 'inline'
+            pwsh: true
+            script: |
+              npm install -g azure-functions-core-tools@4 --unsafe-perm true
+        - task: PowerShell@2
           displayName: 'Generate OpenAPI document'
           inputs:
             targetType: 'inline'
