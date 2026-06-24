@@ -147,14 +147,14 @@ stages:
         - task: CopyFiles@2
           displayName: 'Copy Bicep files'
           inputs:
-            sourceFolder: '$(System.DefaultWorkingDirectory)/Bicep/UserAssigned'
+            sourceFolder: '$(Build.SourcesDirectory)/Bicep/UserAssigned'
             contents: '**'
             TargetFolder: '$(Build.ArtifactStagingDirectory)/Deployment'
 
         - task: CopyFiles@2
           displayName: 'Copy AzureFunctionsInContainers files'
           inputs:
-            sourceFolder: '$(System.DefaultWorkingDirectory)/AzureFunctionsInContainers/docker'
+            sourceFolder: '$(Build.SourcesDirectory)/AzureFunctionsInContainers/docker'
             contents: '**'
             TargetFolder: '$(Build.ArtifactStagingDirectory)/src'
 
