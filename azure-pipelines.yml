@@ -102,7 +102,7 @@ stages:
                    "Constructix.DockerDemo.ServiceBusNamespace": "sbns-selectors-ae-dev.servicebus.windows.net",
                    "Constructix.DockerDemo.ServiceBus.Queues": "epollmarkoffs"
                  }
-               } '@
+               }'@
                $settings | Out-File -FilePath local.settings.json -Encoding utf8              
        
                Write-Host "---- local.settings.json content on disk ----"
