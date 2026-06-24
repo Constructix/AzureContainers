@@ -66,17 +66,19 @@ builder.Services.AddAzureClients(async clientBuilder =>
     DefaultAzureCredential credential = new DefaultAzureCredential();
     clientBuilder.UseCredential(credential);
     var queueNamesFromConfig = builder.Configuration["Constructix.DockerDemo.ServiceBus.Queues"];
-    var queueNames = queueNamesFromConfig.Split(','); 
-    foreach (var queueName in queueNames)
+    var queueNames = queueNamesFromConfig?.Split(',');
+    if (queueNames != null)
     {
-        clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
-            provider.GetService(typeof(ServiceBusClient)) switch
-            {
-                ServiceBusClient client => client.CreateSender(queueName.Trim()),
-                _ => throw new InvalidOperationException("Unable to create ServiceBusClient")
-            }).WithName(queueName.Trim());
+        foreach (var queueName in queueNames)
+        {
+            clientBuilder.AddClient<ServiceBusSender, ServiceBusClientOptions>((_, _, provider) =>
+                provider.GetService(typeof(ServiceBusClient)) switch
+                {
+                    ServiceBusClient client => client.CreateSender(queueName.Trim()),
+                    _ => throw new InvalidOperationException("Unable to create ServiceBusClient")
+                }).WithName(queueName.Trim());
+        }
     }
-    
 
 });
 builder.Services.AddSingleton<ICorrelationContextAccessor, CorrelationContextAccessor>();
