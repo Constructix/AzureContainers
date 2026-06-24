@@ -49,6 +49,44 @@ stages:
             script: |
               npm install -g azure-functions-core-tools@4 --unsafe-perm true
         - task: PowerShell@2
+          displayName: 'Install and start Azurite'
+          inputs:
+            targetType: 'inline'
+            pwsh: true
+            script: |
+              npm install -g azurite
+
+              Start-Process -NoNewWindow -FilePath "azurite" `
+                -ArgumentList @("--silent", "--location", "$(Agent.TempDirectory)/azurite", "--debug", "$(Agent.TempDirectory)/azurite/debug.log") `
+                -RedirectStandardOutput "$(Agent.TempDirectory)/azurite-stdout.log" `
+                -RedirectStandardError "$(Agent.TempDirectory)/azurite-stderr.log"
+
+              # Poll until Azurite's blob endpoint is actually listening
+              $maxAttempts = 12
+              $attempt = 0
+              $ready = $false
+              do {
+                  Start-Sleep -Seconds 2
+                  $attempt++
+                  try {
+                      $tcp = New-Object System.Net.Sockets.TcpClient
+                      $tcp.Connect("127.0.0.1", 10000)
+                      if ($tcp.Connected) { $ready = $true; $tcp.Close() }
+                  } catch { }
+              } while (-not $ready -and $attempt -lt $maxAttempts)
+
+              if (-not $ready) {
+                  Write-Host "---- azurite-stdout.log ----"
+                  Get-Content "$(Agent.TempDirectory)/azurite-stdout.log" -ErrorAction SilentlyContinue
+                  Write-Host "---- azurite-stderr.log ----"
+                  Get-Content "$(Agent.TempDirectory)/azurite-stderr.log" -ErrorAction SilentlyContinue
+                  Write-Error "Azurite did not become ready in time"
+                  exit 1
+              }
+
+              Write-Host "Azurite is up and listening on port 10000"            
+              
+        - task: PowerShell@2
           displayName: 'Generate OpenAPI document'
           inputs:
             targetType: 'inline'
