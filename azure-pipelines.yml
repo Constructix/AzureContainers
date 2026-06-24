@@ -69,7 +69,10 @@ stages:
                   "Constructix.DockerDemo.ServiceBus.Queues": "epollmarkoffs"
                 }
               }
-              '@ | Out-File -FilePath local.settings.json -Encoding utf8
+              '@ | Out-File -FilePath local.settings.json -Encoding utf8              
+              Write-Host "---- local.settings.json content on disk ----"
+              Get-Content local.settings.json -Raw
+              Write-Host "---- end local.settings.json ----"             
 
               $env:OpenApi__HostNames = "https://apim-electordevae.azure-api.net/elector"
 
