@@ -70,8 +70,32 @@ stages:
 
               $env:OpenApi__HostNames = "https://apim-electordevae.azure-api.net/elector"
 
-              Start-Process -NoNewWindow -FilePath "func" -ArgumentList @("start", "--verbose", "false")
-              Start-Sleep -Seconds 45
+              Start-Process -NoNewWindow -FilePath "func" `
+              -ArgumentList @("start", "--port", "7071", "--verbose", "false") `
+              -RedirectStandardOutput "func-stdout.log" `
+              -RedirectStandardError "func-stderr.log"
+
+              # Poll instead of a fixed sleep
+              $maxAttempts = 24
+              $attempt = 0
+              $ready = $false
+              do {
+                  Start-Sleep -Seconds 5
+                  $attempt++
+                  try {
+                      $response = Invoke-WebRequest -Uri http://localhost:7071/api/openapi/v3.json -UseBasicParsing -TimeoutSec 5
+                      if ($response.StatusCode -eq 200) { $ready = $true; break }
+                  } catch { }
+              } while ($attempt -lt $maxAttempts)
+
+              if (-not $ready) {
+                  Write-Host "---- func-stdout.log ----"
+                  Get-Content func-stdout.log -ErrorAction SilentlyContinue
+                  Write-Host "---- func-stderr.log ----"
+                  Get-Content func-stderr.log -ErrorAction SilentlyContinue
+                  Write-Error "Function host did not become ready in time"
+                  exit 1
+              }
 
               Invoke-RestMethod -Method Get -Uri http://localhost:7071/api/openapi/v3.json |
                 ConvertTo-Json -Depth 100 |
