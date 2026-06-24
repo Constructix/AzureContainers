@@ -1,4 +1,4 @@
-trigger:
+﻿trigger:
   branches:
     include:
       - main
@@ -30,19 +30,15 @@ stages:
           displayName: 'Build Solution'
           inputs:
            command: 'build'
-           projects: '$(Solution)'           
-           arguments: '-c Release'
-        - task: UseDotNet@2
-          inputs:
-            packageType: sdk
-            version: '$(DOTNETVERSION)'
-        - task: PowerShell@2
-          displayName: 'Install Azure Functions Core Tools'
-          inputs:
-            targetType: 'inline'
-            pwsh: true
-            script: |
-              npm install -g azure-functions-core-tools@4 --unsafe-perm true
+           projects: '$(Solution)'                      
+# Commented out for the moment....
+        # - task: PowerShell@2
+        #   displayName: 'Install Azure Functions Core Tools'
+        #   inputs:
+        #     targetType: 'inline'
+        #     pwsh: true
+        #     script: |
+        #       npm install -g azure-functions-core-tools@4 --unsafe-perm true
         # - task: PowerShell@2
         #   displayName: 'Generate OpenAPI document'
         #   inputs:
@@ -145,37 +141,70 @@ stages:
         #         ConvertTo-Json -Depth 100 |
         #         Out-File -FilePath "$(Build.ArtifactStagingDirectory)/openapi.json" -Force
 # ----- COPY and Publish Section ------------------------
-        - task: PowerShell@2
-          displayName: 'List contents of DefaultWorkingDirectory and ArtifactStagingDirectory'
-          inputs:
-            targetType: 'inline'
-            script: |
-              Write-Host "=== Contents of System.DefaultWorkingDirectory ==="
-              Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" -Recurse -Force | Select-Object FullName, Length, LastWriteTime | Format-Table -AutoSize
-              Write-Host "=== END Contents of System.DefaultWorkingDirectory ==="
-              Write-Host "`n=== Contents of Build.ArtifactStagingDirectory ==="
-              Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)" -Recurse -Force | Select-Object FullName, Length, LastWriteTime | Format-Table -AutoSize
-              Write-Host "`n=== END Contents of Build.ArtifactStagingDirectory ==="
         - task: CopyFiles@2
           displayName: 'Copy Bicep files'
           inputs:
-            sourceFolder: '$(Build.SourcesDirectory)/Bicep/UserAssigned'
-            contents: '**'
-            TargetFolder: '$(Build.ArtifactStagingDirectory)/Deployment'
-
+            sourceFolder: '$(System.DefaultWorkingDirectory)'
+            contents: '**/Deployment/Bicep/**'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)'
         - task: CopyFiles@2
-          displayName: 'Copy AzureFunctionsInContainers files'
+          displayName: 'Copy Source Files'
           inputs:
-            sourceFolder: '$(Build.SourcesDirectory)/AzureFunctionsInContainers/docker'
-            contents: '**'
-            TargetFolder: '$(Build.ArtifactStagingDirectory)/src'
-
+           sourceFolder: '$(System.DefaultWorkingDirectory)'
+           contents: '**/src/**'
+           TargetFolder: '$(Build.ArtifactStagingDirectory)'
         - task: PublishBuildArtifacts@1
-          displayName: 'Publish artifacts'
+          displayName: 'Pubishing Artifacts'
           inputs:
-            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-            ArtifactName: 'drop'
-            publishLocation: Container
+           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+           ArtifactName: 'drop'
+           publishLocation: Container
+        - task: PowerShell@2
+          displayName: 'Show Folder Structure'
+          inputs:
+            targetType: 'inline'
+            script: |
+              function Show-Tree {
+                  param(
+                      [string]$Path,
+                      [string]$Prefix = ""
+                  )
+
+                  if (-not (Test-Path $Path)) {
+                      Write-Host "Directory does not exist: $Path" -ForegroundColor Yellow
+                      return
+                  }
+
+                  $items = Get-ChildItem -Path $Path -Force | Sort-Object PSIsContainer, Name
+
+                  for ($i = 0; $i -lt $items.Count; $i++) {
+                      $item = $items[$i]
+                      $isLast = $i -eq ($items.Count - 1)
+                      $connector = if ($isLast) { "└──" } else { "├──" }
+                      $color = if ($item.PSIsContainer) { "Yellow" } else { "White" }
+
+                      Write-Host "$Prefix$connector $($item.Name)" -ForegroundColor $color
+
+                      if ($item.PSIsContainer) {
+                          $newPrefix = if ($isLast) { "$Prefix    " } else { "$Prefix│   " }
+                          Show-Tree -Path $item.FullName -Prefix $newPrefix
+                      }
+                  }
+              }
+
+              Write-Host "`n=============================================================" -ForegroundColor Cyan
+              Write-Host "📁 System.DefaultWorkingDirectory" -ForegroundColor Cyan
+              Write-Host "Path: $(System.DefaultWorkingDirectory)" -ForegroundColor Gray
+              Write-Host "=============================================================`n"
+
+              Show-Tree "$(System.DefaultWorkingDirectory)"
+
+              Write-Host "`n=============================================================" -ForegroundColor Cyan
+              Write-Host "📁 Build.ArtifactStagingDirectory" -ForegroundColor Cyan
+              Write-Host "Path: $(Build.ArtifactStagingDirectory)" -ForegroundColor Gray
+              Write-Host "=============================================================`n"
+
+              Show-Tree "$(Build.ArtifactStagingDirectory)"
 # ----- END COPY and Publish Section ------------------------
 # - stage: Deploy_To_Dev
 #   displayName: 'Deploy_To_Dev'
