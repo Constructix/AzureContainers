@@ -92,6 +92,14 @@ stages:
             targetType: 'inline'
             pwsh: true
             script: |
+              try {
+                $tcp = New-Object System.Net.Sockets.TcpClient
+                $tcp.Connect("127.0.0.1", 10000)
+                Write-Host "Azurite still listening: $($tcp.Connected)"
+                $tcp.Close()
+                } catch {
+                  Write-Host "Azurite NOT reachable from this step: $($_.Exception.Message)"
+              }
               find $(Build.SourcesDirectory)/src/bin -maxdepth 3              
               cd $(Build.SourcesDirectory)/src/bin/Release/net10.0
               $env:SkipAppConfig = "true"
