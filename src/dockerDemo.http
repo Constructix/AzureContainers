@@ -3,7 +3,6 @@
 @localdockerhost=http://localhost:8080
 @dockerHost =https://caelectordevae.thankfulbeach-32e7a100.australiaeast.azurecontainerapps.io
 //
-GET {{host}}/api/constructixHttpExample
 ###
 GET {{host}}/api/GetCustomers
 ###
@@ -21,6 +20,7 @@ contenttype: application/json
     "lastName":"Jones"
     }
   }
+###
 # Get GetReceiveOrdersQueue Name
 GET {{host}}/api/getqueuename
 
