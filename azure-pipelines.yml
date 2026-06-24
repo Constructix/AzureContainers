@@ -55,6 +55,17 @@ stages:
            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
            ArtifactName: 'drop'
            publishLocation: Container
+        - task: PowerShell@2
+          displayName: 'List contents of DefaultWorkingDirectory and ArtifactStagingDirectory'
+          inputs:
+            targetType: 'inline'
+            script: |
+              Write-Host "=== Contents of System.DefaultWorkingDirectory ==="
+              Get-ChildItem -Path "$(System.DefaultWorkingDirectory)" -Recurse -Force | Select-Object FullName, Length, LastWriteTime | Format-Table -AutoSize
+              Write-Host "=== END Contents of System.DefaultWorkingDirectory ==="
+              Write-Host "`n=== Contents of Build.ArtifactStagingDirectory ==="
+              Get-ChildItem -Path "$(Build.ArtifactStagingDirectory)" -Recurse -Force | Select-Object FullName, Length, LastWriteTime | Format-Table -AutoSize
+              Write-Host "`n=== END Contents of Build.ArtifactStagingDirectory ==="
 - stage: Deploy_To_Dev
   displayName: 'Deploy_To_Dev'
   dependsOn: Build_And_Package
