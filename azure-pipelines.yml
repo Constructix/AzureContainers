@@ -85,13 +85,20 @@ stages:
               }
 
               Write-Host "Azurite is up and listening on port 10000"
-        
+
               # Navigate directly to the built binaries folder
               cd "$(Build.SourcesDirectory)/src/bin/Release/net10.0"
 
               # Safe single-line string generation for local settings fallback
               $settings = '{ "IsEncrypted": false, "Values": { "AzureWebJobsStorage": "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;", "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated" } }'
               $settings | Out-File -FilePath local.settings.json -Encoding utf8              
+
+              # 🔐 FORCE INJECTION OF ENVIRONMENT VARIABLES INTO PROCESS SCOPE
+              $env:SkipAppConfig = "true"
+              $env:OpenApi__HostNames = "https://apim-electordevae.azure-api.net/elector"
+              $env:AzureWebJobsStorage = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
+              $env:Constructix__DockerDemo__ServiceBusNamespace = "https://sbns-selectors-ae-dev.servicebus.windows.net"
+              $env:Constructix__DockerDemo__ServiceBus__Queues = "epollmarkoffs"
 
               # Start the function host forcing it to run out of the current binary directory (.)
               Start-Process -NoNewWindow -FilePath "func" `
@@ -124,13 +131,6 @@ stages:
               Invoke-RestMethod -Method Get -Uri "http://localhost:7071/api/openapi/v3.json" |
                 ConvertTo-Json -Depth 100 |
                   Out-File -FilePath "$(Build.ArtifactStagingDirectory)/openapi.json" -Force
-              # Inject variables globally into the process scope here so .NET Worker finds them
-          env:
-            SkipAppConfig: "true"
-            OpenApi__HostNames: "https://apim-electordevae.azure-api.net/elector"
-            AzureWebJobsStorage: "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://127.0.0.1:10000/devstoreaccount1;QueueEndpoint=http://127.0.0.1:10001/devstoreaccount1;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1;"
-            Constructix_DockerDemo_ServiceBusNamespace: "sbns-selectors-ae-dev.servicebus.windows.net"
-            Constructix_DockerDemo_ServiceBus_Queues: "epollmarkoffs"
 - stage: Deploy_To_Dev
   displayName: 'Deploy_To_Dev'
   dependsOn: Build_And_Package
