@@ -54,6 +54,7 @@ stages:
             targetType: 'inline'
             pwsh: true
             script: |
+              find $(Build.SourcesDirectory)/src/bin -maxdepth 3              
               cd $(Build.SourcesDirectory)/src/bin/Release/net10.0
 
               # func start needs this file to exist even with dummy values for doc generation
