@@ -34,8 +34,8 @@ stages:
         - task: DotNetCoreCLI@2
           displayName: 'Build Solution'
           inputs:
-           command: 'build'
-           projects: '$(Solution)'
+           command: 'publish'
+           projects: '$(Solution)'           
         - task: UseDotNet@2
           inputs:
             packageType: sdk
