@@ -143,7 +143,7 @@ stages:
         
               Invoke-RestMethod -Method Get -Uri "http://localhost:7071/api/openapi/v3.json" |
                 ConvertTo-Json -Depth 100 |
-                Out-File -FilePath "$(Build.ArtifactStagingDirectory)/openapi/openapi.json" -Force
+                Out-File -FilePath "$(Build.ArtifactStagingDirectory)/openapi.json" -Force
         - task: CopyFiles@2
           displayName: 'Copy Bicep files'
           inputs:
