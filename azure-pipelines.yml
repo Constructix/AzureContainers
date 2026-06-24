@@ -47,7 +47,7 @@ stages:
             targetType: 'inline'
             pwsh: true
             script: |
-              cd $(System.DefaultWorkingDirectory)/src/bin/Release/net10.0
+              cd $(System.SourcesDirectory)/src/bin/Release/net10.0
 
               # func start needs this file to exist even with dummy values for doc generation
               @'
