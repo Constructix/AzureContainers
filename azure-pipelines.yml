@@ -144,7 +144,10 @@ stages:
 
               Invoke-RestMethod -Method Get -Uri http://localhost:7071/api/openapi/v3.json |
                 ConvertTo-Json -Depth 100 |
-                  Out-File -FilePath $(Build.ArtifactStagingDirectory)/openapi.json -Force                
+                  Out-File -FilePath $(Build.ArtifactStagingDirectory)/openapi.json -Force  
+                  Write-Host "---- Running worker directly to capture real exception ----"
+                  & dotnet dockerDemo.dll 2>&1 | Tee-Object -FilePath direct-worker-output.log
+                  Write-Host "---- end direct worker output ----"
         - task: PublishBuildArtifacts@1
           displayName: 'Publish OpenAPI artifact'
           inputs:
