@@ -154,9 +154,9 @@ stages:
           inputs:
             sourceFolder: '$(System.DefaultWorkingDirectory)'
             contents: |
-              '**/Deployment/Bicep/**'
-              '**/src/**'
-              'api/openapi.json'
+              **/Deployment/Bicep/**
+              **/src/**
+              api/openapi.json
             TargetFolder: '$(Build.ArtifactStagingDirectory)'        
         - task: PublishBuildArtifacts@1
           displayName: 'Pubishing Artifacts'
