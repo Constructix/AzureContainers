@@ -38,13 +38,13 @@ stages:
           inputs:
             command: test
             projects: '$(testProject)'
-            arguments: '--collect:"XPlat Code Coverage"'
+            arguments: '--collect:"XPlat Code Coverage" --results-directory $(Agent.TempDirectory)/TestResults'
             publishTestResults: true          
         - task: PublishCodeCoverageResults@2
           displayName: 'Publish Code Coverage'
           inputs:         
-            summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
-            pathToSources: '$(Agent.TempDirectory)/TestResults'
+            summaryFileLocation: '$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml'
+            pathToSources: '$(Build.SourcesDirectory)'
         - task: UseDotNet@2
           inputs:
             packageType: sdk
