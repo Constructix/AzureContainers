@@ -49,8 +49,7 @@ stages:
             targetType: 'inline'
             pwsh: true
             script: |
-              $apiFolder = "$(System.DefaultWorkingDirectory)/api"
-              New-Item -ItemType Directory -Path $apiFolder -Force | Out-Null
+              
               npm install -g azurite
         
               Start-Process -NoNewWindow -FilePath "azurite" `
@@ -142,6 +141,8 @@ stages:
                   Write-Error "Function host did not become ready in time"
                   exit 1
               }
+              $apiFolder = "$(System.DefaultWorkingDirectory)/api"
+              New-Item -ItemType Directory -Path $apiFolder -Force | Out-Null
         
               Invoke-RestMethod -Method Get -Uri "http://localhost:7071/api/openapi/v3.json" |
                 ConvertTo-Json -Depth 100 |
