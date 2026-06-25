@@ -33,10 +33,17 @@ stages:
            projects: '$(Solution)' 
            arguments: '--configuration Release' 
         - task: DotNetCoreCLI@2
+          displayName: 'Run Tests with coverage'
           inputs:
-            azureSubscription: 'constructixDevSvcConn'
-            command: 'test'
-            projects: '$(solution)'
+            command: test
+            projects: '$(testProject)'
+            arguments: '--collect:"XPlat Code Coverage"'
+            publishTestResults: true          
+        - task: PublishCodeCoverageResults@2
+          displayName: 'Publish Code Coverage'
+          inputs:         
+            summaryFileLocation: '$(Agent.TempDirectory)/**/coverage.cobertura.xml'
+            pathToSources: '$(Agent.TempDirectory)/TestResults'
         - task: UseDotNet@2
           inputs:
             packageType: sdk
