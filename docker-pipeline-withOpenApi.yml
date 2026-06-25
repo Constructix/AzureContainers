@@ -211,75 +211,75 @@ stages:
 
               Show-Tree "$(Build.ArtifactStagingDirectory)"
 # ----- END COPY and Publish Section ------------------------
-# - stage: Deploy_To_Dev
-#   displayName: 'Deploy_To_Dev'
-#   dependsOn: Build_And_Package
-#   jobs:
-#     - deployment: ProvisionAzureResources
-#       displayName: 'Provision Azure Resources'
-#       environment: 'DEV'      
-#       variables:
-#         AzureSubscription : 'constructixDevSvcConn'
-#         DevResourceGroup : 'rg-ems-elector-ae-dev'
-#         ContainerRepository : 'crelectordevae'        
-#         ImageRepositoryName : 'electorservicesrepository'
-#         DeployEnv : 'dev'
-#       strategy:
-#        runOnce:
-#          deploy:
-#           steps:
-#             - task: PowerShell@2
-#               inputs:
-#                 targetType: inline
-#                 script: |
-#                   Write-Host "CurrentBuild Id: $(Build.BuildNumber)"
-#             - task: DownloadPipelineArtifact@2
-#               displayName: 'Downloading build artifacts'
-#               inputs:
-#                buildType: current
-#                artifactName: 'drop'
-#                targetPath: '$(Pipeline.Workspace)'
-#             - task: PowerShell@2
-#               displayName: 'Debug variables'
-#               inputs:
-#                 targetType: inline
-#                 script: |
-#                   Write-Host "DevResourceGroup=$(DevResourceGroup)"
-#                   Write-Host "ContainerRepository=$(ContainerRepository)"
-#                   Write-Host "DeployEnv=$(DeployEnv)"
-#                   Write-Host "ImageRepositoryName=$(ImageRepositoryName)"
-#             - task: AzureCLI@2
-#               displayName: 'Provising Azure Resources'
-#               inputs:
-#                 azureSubscription: 'constructixDevSvcConn'
-#                 scriptType: pscore
-#                 scriptLocation: scriptPath
-#                 scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Deploy.ps1'
-#                 workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep'
-#                 arguments: -ResourceGroup $(DevResourceGroup) -ContainerRepository $(ContainerRepository) -DeploymentEnv $(DeployEnv) -RepositoryName $(ImageRepositoryName)
-#                 addSpnToEnvironment: true
-#                 #failOnStandardError: true # Turnoff the moment.
-#             - task: AzureCLI@2
-#               displayName: 'Build and Push Image to Container Registry'
-#               inputs:
-#                 azureSubscription: 'constructixDevSvcConn'
-#                 scriptType: bash
-#                 scriptLocation: inlineScript
-#                 inlineScript: |
-#                   az acr login --name 'crelectordevae'
-#                   IMAGE='$(ContainerRepository).azurecr.io/$(ImageRepositoryName):$(imageTag)'
-#                   docker build \
-#                     --no-cache \
-#                     -f $(Pipeline.Workspace)/drop/src/Dockerfile \
-#                       -t $IMAGE \
-#                       $(Pipeline.Workspace)/drop/src
-#                     docker push $IMAGE
-#             - task: AzureCLI@2
-#               displayName: 'Deploy Container App with Latest Image'
-#               inputs:
-#                 azureSubscription: 'constructixDevSvcConn'
-#                 scriptType: pscore
-#                 scriptLocation: scriptPath
-#                 scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container/CreateContainer-deploy-$(DeployEnv).ps1'
-#                 workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container'
-#                 arguments: -ResourceGroup $(DevResourceGroup) -ContainerRegistry $(ContainerRepository) -RepositoryName $(ImageRepositoryName) -Environment $(DeployEnv) 
+- stage: Deploy_To_Dev
+  displayName: 'Deploy_To_Dev'
+  dependsOn: Build_And_Package
+  jobs:
+    - deployment: ProvisionAzureResources
+      displayName: 'Provision Azure Resources'
+      environment: 'DEV'      
+      variables:
+        AzureSubscription : 'constructixDevSvcConn'
+        DevResourceGroup : 'rg-ems-elector-ae-dev'
+        ContainerRepository : 'crelectordevae'        
+        ImageRepositoryName : 'electorservicesrepository'
+        DeployEnv : 'dev'
+      strategy:
+       runOnce:
+         deploy:
+          steps:
+            - task: PowerShell@2
+              inputs:
+                targetType: inline
+                script: |
+                  Write-Host "CurrentBuild Id: $(Build.BuildNumber)"
+            - task: DownloadPipelineArtifact@2
+              displayName: 'Downloading build artifacts'
+              inputs:
+               buildType: current
+               artifactName: 'drop'
+               targetPath: '$(Pipeline.Workspace)'
+            - task: PowerShell@2
+              displayName: 'Debug variables'
+              inputs:
+                targetType: inline
+                script: |
+                  Write-Host "DevResourceGroup=$(DevResourceGroup)"
+                  Write-Host "ContainerRepository=$(ContainerRepository)"
+                  Write-Host "DeployEnv=$(DeployEnv)"
+                  Write-Host "ImageRepositoryName=$(ImageRepositoryName)"
+            - task: AzureCLI@2
+              displayName: 'Provising Azure Resources'
+              inputs:
+                azureSubscription: 'constructixDevSvcConn'
+                scriptType: pscore
+                scriptLocation: scriptPath
+                scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Deploy.ps1'
+                workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep'
+                arguments: -ResourceGroup $(DevResourceGroup) -ContainerRepository $(ContainerRepository) -DeploymentEnv $(DeployEnv) -RepositoryName $(ImageRepositoryName)
+                addSpnToEnvironment: true
+                #failOnStandardError: true # Turnoff the moment.
+            - task: AzureCLI@2
+              displayName: 'Build and Push Image to Container Registry'
+              inputs:
+                azureSubscription: 'constructixDevSvcConn'
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  az acr login --name 'crelectordevae'
+                  IMAGE='$(ContainerRepository).azurecr.io/$(ImageRepositoryName):$(imageTag)'
+                  docker build \
+                    --no-cache \
+                    -f $(Pipeline.Workspace)/drop/src/Dockerfile \
+                      -t $IMAGE \
+                      $(Pipeline.Workspace)/drop/src
+                    docker push $IMAGE
+            - task: AzureCLI@2
+              displayName: 'Deploy Container App with Latest Image'
+              inputs:
+                azureSubscription: 'constructixDevSvcConn'
+                scriptType: pscore
+                scriptLocation: scriptPath
+                scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container/CreateContainer-deploy-$(DeployEnv).ps1'
+                workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container'
+                arguments: -ResourceGroup $(DevResourceGroup) -ContainerRegistry $(ContainerRepository) -RepositoryName $(ImageRepositoryName) -Environment $(DeployEnv) 
