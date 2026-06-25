@@ -8,8 +8,9 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 variables:
-  VmImageName: 'ubuntu-latest'
-  Solution: 'src/dockerDemo.csproj'
+  VmImageName : 'ubuntu-latest'
+  Solution    : 'src/dockerDemo.csproj'
+  testProject : 'DockerDemo.Tests/DockerDemo.Tests.csproj'
   DOTNETVERSION: '10.x'
   imageTag: '$(Build.SourceVersion)'
 stages:
