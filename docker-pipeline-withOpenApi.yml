@@ -32,6 +32,11 @@ stages:
            command: 'build'
            projects: '$(Solution)' 
            arguments: '--configuration Release' 
+        - task: DotNetCoreCLI@2
+          inputs:
+            azureSubscription: 'constructixDevSvcConn'
+            command: 'test'
+            projects: '$(solution)'
         - task: UseDotNet@2
           inputs:
             packageType: sdk
