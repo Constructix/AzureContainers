@@ -39,7 +39,12 @@ stages:
             command: test
             projects: '$(testProject)'
             arguments: '--collect:"XPlat Code Coverage" --results-directory $(Agent.TempDirectory)/TestResults'
-            publishTestResults: true          
+            publishTestResults: false # need to be set to false as there are 2 arguments. 
+        - task: PublishTestResults@2
+          displayName: 'Publish Test Run Metrics'
+          inputs:
+            testResultsFormat: 'VSTest'
+            testResultsFiles: '$(Agent.TempDirectory)/TestResults/*.trx'
         - task: PublishCodeCoverageResults@2
           displayName: 'Publish Code Coverage'
           inputs:         
