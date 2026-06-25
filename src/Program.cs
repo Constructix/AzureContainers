@@ -29,7 +29,7 @@ builder.Configuration.AddJsonFile(LocalSettings, optional: true, reloadOnChange:
 var skipAppConfig = string.Equals(builder.Configuration["SkipAppConfig"], "true", StringComparison.OrdinalIgnoreCase);
 if (!skipAppConfig)
 {
-    var appConfigEndpoint = builder.Configuration["AppConfig"];
+    var appConfigEndpoint = builder.Configuration["AppConfig"] ?? throw new Exception("AppConfig has not be assigned.");
     // Load App Configuration
     builder.Configuration.AddAzureAppConfiguration(options =>
     {
