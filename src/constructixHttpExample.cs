@@ -69,7 +69,7 @@ public class constructixHttpExample
     [Function("Products")]
     [OpenApiOperation(operationId: "GetAllProducts", tags: new[] { "Product" })]
     [OpenApiResponseWithBody(HttpStatusCode.OK, "application/json", typeof(List<Product>))]
-    public async Task<HttpResponseData> GetProducts([HttpTrigger(AuthorizationLevel.Anonymous, "get")] HttpRequestData req)
+    public async Task<HttpResponseData> GetProducts([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route ="v1/products")] HttpRequestData req)
     {
         _logger.LogInformation("Trigger to Retrieve all products from Product service.");
         var productList = await _productService.GetProductsAsync();

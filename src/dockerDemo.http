@@ -30,7 +30,7 @@ GET {{host}}/api/getcustomers
 GET {{host}}/api/GetQueueName
 
 ###
-GET {{host}}/api/products
+GET {{host}}/api/v1/products
 
 ###
 GET {{host}}/api/quotations
