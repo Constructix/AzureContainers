@@ -1,4 +1,4 @@
-﻿trigger:
+trigger:
   branches:
     include:
       - main
@@ -9,7 +9,7 @@ pool:
   vmImage: ubuntu-latest
 variables:
   VmImageName: 'ubuntu-latest'
-  Solution: 'AzureContainers/src/dockerDemo.csproj'
+  Solution: 'src/dockerDemo.csproj'
   DOTNETVERSION: '10.x'
   imageTag: '$(Build.SourceVersion)'
 stages:
@@ -30,12 +30,7 @@ stages:
           displayName: 'Build Solution'
           inputs:
            command: 'build'
-           projects: '$(Solution)' 
-        - task: UseDotNet@2
-          inputs:
-            packageType: sdk
-            version: '$(DOTNETVERSION)'   
-# Commented out for the moment....
+           projects: '$(Solution)'                     
         - task: PowerShell@2
           displayName: 'Install Azure Functions Core Tools'
           inputs:
