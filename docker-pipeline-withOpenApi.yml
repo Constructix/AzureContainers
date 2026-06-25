@@ -30,7 +30,11 @@ stages:
           displayName: 'Build Solution'
           inputs:
            command: 'build'
-           projects: '$(Solution)'                      
+           projects: '$(Solution)' 
+        - task: UseDotNet@2
+          inputs:
+            packageType: sdk
+            version: '$(DOTNETVERSION)'   
 # Commented out for the moment....
         - task: PowerShell@2
           displayName: 'Install Azure Functions Core Tools'
