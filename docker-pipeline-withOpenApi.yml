@@ -9,7 +9,7 @@ pool:
   vmImage: ubuntu-latest
 variables:
   VmImageName: 'ubuntu-latest'
-  Solution: 'src/dockerDemo.csproj'
+  Solution: 'AzureContainers/src/dockerDemo.csproj'
   DOTNETVERSION: '10.x'
   imageTag: '$(Build.SourceVersion)'
 stages:
@@ -83,7 +83,7 @@ stages:
               Write-Host "Azurite is up and listening on port 10000"
         
               # Navigate directly to the built binaries folder
-              cd "$(Build.SourcesDirectory)/src/bin/Release/net10.0"
+              cd "$(Build.SourcesDirectory)/AzureContainers/src/bin/Release/net10.0"
         
               # local.settings.json keeps EVERY key your Program.cs reads via literal dotted
               # IConfiguration["..."] lookups. Dotted keys here are NOT the same as the
