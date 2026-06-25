@@ -84,7 +84,7 @@ stages:
               Write-Host "Azurite is up and listening on port 10000"
         
               # Navigate directly to the built binaries folder
-              cd "$(Build.SourcesDirectory)/AzureContainers/src/bin/Release/net10.0"
+              cd "$(Build.SourcesDirectory)/src/bin/Release/net10.0"
         
               # local.settings.json keeps EVERY key your Program.cs reads via literal dotted
               # IConfiguration["..."] lookups. Dotted keys here are NOT the same as the
