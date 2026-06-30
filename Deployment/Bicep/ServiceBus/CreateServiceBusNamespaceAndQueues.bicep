@@ -2,29 +2,29 @@ param serviceBusNamespaceObject object
 
 
 resource serviceBusResource 'Microsoft.ServiceBus/namespaces@2025-05-01-preview' = {
-  name                                                  : serviceBusNamespaceObject.name
-  location                                              : serviceBusNamespaceObject.location
-  sku                                                   : serviceBusNamespaceObject.sku
+  name                                                          : serviceBusNamespaceObject.name
+  location                                                      : serviceBusNamespaceObject.location
+  sku                                                           : serviceBusNamespaceObject.sku
   properties: {
     platformCapabilities: {
       confidentialCompute: {
-        mode                                            : 'Disabled'
+        mode                                                    : 'Disabled'
       }
     }
     geoDataReplication: {
       maxReplicationLagDurationInSeconds: 0
       locations: [
         {
-          locationName                                  : 'australiaeast'
-          roleType                                      : 'Primary'
+          locationName                                          : 'australiaeast'
+          roleType                                              : 'Primary'
         }
       ]
     }
-    premiumMessagingPartitions                          : 0
-    minimumTlsVersion                                   : '1.2'
-    publicNetworkAccess                                 : 'Enabled'
-    disableLocalAuth                                    : false
-    zoneRedundant                                       : true
+    premiumMessagingPartitions                                  : 0
+    minimumTlsVersion                                           : '1.2'
+    publicNetworkAccess                                         : 'Enabled'
+    disableLocalAuth                                            : false
+    zoneRedundant                                               : true
   }
 }
 

@@ -10,7 +10,7 @@ resource registries_constructixfirstcontainerregistry_name_resource 'Microsoft.C
     type                                                : 'SystemAssigned'
   }
   properties: {
-    adminUserEnabled: true
+    adminUserEnabled                                    : true
     policies: {
       quarantinePolicy: {
         status                                          : 'disabled'

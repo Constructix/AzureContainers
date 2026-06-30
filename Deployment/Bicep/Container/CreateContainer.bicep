@@ -51,7 +51,7 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
     environmentId                                       : dockerContainerAppEnvironmentModule.id
     workloadProfileName                                 : 'Consumption'
     configuration: {
-      activeRevisionsMode: 'Single'
+      activeRevisionsMode                               : 'Single'
       ingress: {
         external                                        : true
         targetPort                                      : 80
