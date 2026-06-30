@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/QEMS.SampleWebApi.Demo/QEMS.SampleWebApi.Demo.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Ems.Api.Data.Respository.Tests/Ems.Api.Data.Respository.Tests.csproj" />
+  </Folder>
+</Solution>

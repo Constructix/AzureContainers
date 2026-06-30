@@ -1,0 +1,16 @@
+· DOCKERIGNORE
+bin/
+obj/
+**/bin/
+**/obj/
+.git/
+.gitignore
+.vs/
+.vscode/
+*.user
+*.md
+Dockerfile*
+.dockerignore
+**/appsettings.Development.json
+**/local.settings.json
+ 
