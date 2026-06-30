@@ -13,3 +13,4 @@
 *.wsuo
 /DockerDemo.Tests/bin
 /DockerDemo.Tests/obj
+/SampleAPI/obj
