@@ -14,3 +14,8 @@
 /DockerDemo.Tests/bin
 /DockerDemo.Tests/obj
 /SampleAPI/obj
+/webApi/.vs
+/webApi/src/QEMS.SampleWebApi.Demo/bin/Debug/net10.0
+/webApi/src/QEMS.SampleWebApi.Demo/obj
+/webApi/tests/Ems.Api.Data.Respository.Tests/bin/Debug/net10.0
+/webApi/tests/Ems.Api.Data.Respository.Tests/obj
