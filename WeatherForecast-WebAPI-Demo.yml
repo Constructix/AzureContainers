@@ -141,6 +141,6 @@ stages:
                 azureSubscription: 'constructixDevSvcConn'
                 scriptType: pscore
                 scriptLocation: scriptPath
-                scriptPath: '$(Pipeline.Workspace)/drop/webApi/Deployment/Bicep/Container/CreateContainer-deploy-$(DeployEnv).ps1'
-                workingDirectory: '$(Pipeline.Workspace)/drop/webApi/Deployment/Bicep/Container'
+                scriptPath: '$(Pipeline.Workspace)/drop/webApi/deployment/Bicep/Container/CreateContainer-deploy-$(DeployEnv).ps1'
+                workingDirectory: '$(Pipeline.Workspace)/drop/webApi/deployment/Bicep/Container/'
                 arguments: -ResourceGroup $(DevResourceGroup) -ContainerRegistry $(ContainerRepository) -RepositoryName $(ImageRepositoryName) -Environment $(DeployEnv) 

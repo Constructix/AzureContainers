@@ -1,14 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+	  <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
+	  <OpenApiDocumentsDirectory></OpenApiDocumentsDirectory>
+	  <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
-
+ 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
     <PackageReference Include="Microsoft.OpenApi" Version="2.9.0" />
   </ItemGroup>
-
+	<ItemGroup>
+		<OpenApiDocument Include="v1">
+			<DocumentName>v1</DocumentName>
+			<DocumentTitle>My API</DocumentTitle>
+			<DocumentVersion>1.0</DocumentVersion>
+		</OpenApiDocument>
+	</ItemGroup>
 </Project>
