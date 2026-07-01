@@ -135,12 +135,12 @@ stages:
                       -t $IMAGE \
                       $(Pipeline.Workspace)/drop/webApi/src/QEMS.SampleWebApi.Demo
                     docker push $IMAGE
-#             - task: AzureCLI@2
-#               displayName: 'Deploy Container App with Latest Image'
-#               inputs:
-#                 azureSubscription: 'constructixDevSvcConn'
-#                 scriptType: pscore
-#                 scriptLocation: scriptPath
-#                 scriptPath: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container/CreateContainer-deploy-$(DeployEnv).ps1'
-#                 workingDirectory: '$(Pipeline.Workspace)/drop/Deployment/Bicep/Container'
-#                 arguments: -ResourceGroup $(DevResourceGroup) -ContainerRegistry $(ContainerRepository) -RepositoryName $(ImageRepositoryName) -Environment $(DeployEnv) 
+            - task: AzureCLI@2
+              displayName: 'Deploy Container App with Latest Image'
+              inputs:
+                azureSubscription: 'constructixDevSvcConn'
+                scriptType: pscore
+                scriptLocation: scriptPath
+                scriptPath: '$(Pipeline.Workspace)/drop/webApi/Deployment/Bicep/Container/CreateContainer-deploy-$(DeployEnv).ps1'
+                workingDirectory: '$(Pipeline.Workspace)/drop/webApi/Deployment/Bicep/Container'
+                arguments: -ResourceGroup $(DevResourceGroup) -ContainerRegistry $(ContainerRepository) -RepositoryName $(ImageRepositoryName) -Environment $(DeployEnv) 
