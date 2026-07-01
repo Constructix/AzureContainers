@@ -117,24 +117,24 @@ stages:
                 scriptLocation: scriptPath
                 scriptPath: '$(Pipeline.Workspace)/drop/webApi/deployment/Bicep/Deploy.ps1'
                 workingDirectory: '$(Pipeline.Workspace)/drop/webApi/deployment/Bicep'
-                arguments: -ResourceGroup $(DevResourceGroup) -ContainerRepository $(ContainerRepository) -DeploymentEnv $(DeployEnv) -RepositoryName $(ImageRepositoryName)
+                arguments: -ResourceGroup $(DevResourceGroup) -DeploymentEnv $(DeployEnv)
                 addSpnToEnvironment: true                
                 # Turnoff the moment. failOnStandardError: true # Turnoff the moment.
-            # - task: AzureCLI@2
-            #   displayName: 'Build and Push Image to Container Registry'
-            #   inputs:
-            #     azureSubscription: 'constructixDevSvcConn'
-            #     scriptType: bash
-            #     scriptLocation: inlineScript
-            #     inlineScript: |
-            #       az acr login --name 'crelectordevae'
-            #       IMAGE='$(ContainerRepository).azurecr.io/$(ImageRepositoryName):$(imageTag)'
-            #       docker build \
-            #         --no-cache \
-            #         -f $(Pipeline.Workspace)/drop/src/Dockerfile \
-            #           -t $IMAGE \
-            #           $(Pipeline.Workspace)/drop/src
-            #         docker push $IMAGE
+            - task: AzureCLI@2
+              displayName: 'Build and Push Image to Container Registry'
+              inputs:
+                azureSubscription: 'constructixDevSvcConn'
+                scriptType: bash
+                scriptLocation: inlineScript
+                inlineScript: |
+                  az acr login --name 'crelectordevae'
+                  IMAGE='$(ContainerRepository).azurecr.io/$(ImageRepositoryName):$(imageTag)'
+                  docker build \
+                    --no-cache \
+                    -f $(Pipeline.Workspace)/drop/src/Dockerfile \
+                      -t $IMAGE \
+                      $(Pipeline.Workspace)/drop/src
+                    docker push $IMAGE
 #             - task: AzureCLI@2
 #               displayName: 'Deploy Container App with Latest Image'
 #               inputs:

@@ -91,7 +91,7 @@ module assignRolesModule 'AssignRoles/AssignRoles.bicep' = {
     storageAccountObject                                : storageAccountObject    
     principalId                                         : identityModule.outputs.principalId    
   }
-  dependsOn                                             : [storageAccountModule, createServiceBusNamespaceAndQueuesModule]
+  dependsOn                                             : [registryContainerModule, storageAccountModule, createServiceBusNamespaceAndQueuesModule]
 }
 
 module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnvironment.bicep' = {
