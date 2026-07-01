@@ -164,21 +164,21 @@ stages:
 #                 ConvertTo-Json -Depth 100 |
 #                 Out-File -FilePath "$apiFolder/openapi.json" -Force
 # # ----- COPY and Publish Section ------------------------
-#         - task: CopyFiles@2
-#           displayName: 'Copy Bicep files'
-#           inputs:
-#             sourceFolder: '$(System.DefaultWorkingDirectory)'
-#             contents: |
-#               **/Deployment/Bicep/**
-#               **/src/**
-#               api/openapi.json
-#             TargetFolder: '$(Build.ArtifactStagingDirectory)'        
-#         - task: PublishBuildArtifacts@1
-#           displayName: 'Pubishing Artifacts'
-#           inputs:
-#            PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-#            ArtifactName: 'drop'
-#            publishLocation: Container
+        - task: CopyFiles@2
+          displayName: 'Copy Bicep files'
+          inputs:
+            sourceFolder: '$(System.DefaultWorkingDirectory)'
+            contents: |
+              **/deployment/Bicep/**
+              **/src/**
+              #api/openapi.json
+            TargetFolder: '$(Build.ArtifactStagingDirectory)'        
+        - task: PublishBuildArtifacts@1
+          displayName: 'Pubishing Artifacts'
+          inputs:
+           PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+           ArtifactName: 'drop'
+           publishLocation: Container
 #         - task: PowerShell@2
 #           displayName: 'Show Folder Structure'
 #           inputs:
