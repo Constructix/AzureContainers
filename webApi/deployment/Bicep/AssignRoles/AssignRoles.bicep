@@ -6,10 +6,12 @@ param principalId string
 
 resource acr 'Microsoft.ContainerRegistry/registries@2023-01-01' existing = {
   name                                                  : registryContainerObject.name 
+  //scope                                                 : resourceGroup('becc6fa4-e269-40cc-82e1-6f6ffff81cb9', registryContainerObject.resourceGroup)
 }
 
 resource storageAccountResource 'Microsoft.Storage/storageAccounts@2025-06-01' existing = {
   name                                                  : storageAccountObject.name
+  //scope                                                 : resourceGroup('becc6fa4-e269-40cc-82e1-6f6ffff81cb9', storageAccountObject.resourceGroup)
 }
 
 resource assignRolesToStorageAccount 'Microsoft.Authorization/roleAssignments@2022-04-01' = [

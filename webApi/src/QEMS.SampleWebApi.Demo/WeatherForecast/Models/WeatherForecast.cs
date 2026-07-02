@@ -1,6 +1,6 @@
-namespace QEMS.SampleWebApi.Demo;
+namespace QEMS.SampleWebApi.Demo.weatherForecast.Models;
 
-public class WeatherForecast
+public class WeatherForecastResponse
 {
     public DateOnly Date { get; set; }
 

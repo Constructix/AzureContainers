@@ -50,7 +50,7 @@ module registryContainerModule 'ContainerRegistry/CreateRegistry.bicep' = {
 
 module createServiceBusNamespaceAndQueuesModule 'ServiceBus/CreateServiceBusNamespaceAndQueues.bicep' ={
     name                                                : 'createServiceBusAndQueues'
-    scope                                               : resourceGroup(serviceBusNamespaceObject.resourceGroup)
+    scope                                               : resourceGroup(serviceBusNamespaceObject.subscriptionId, serviceBusNamespaceObject.resourceGroup)
     params: {
         serviceBusNamespaceObject                       : serviceBusNamespaceObject
     }
@@ -91,7 +91,7 @@ module assignRolesModule 'AssignRoles/AssignRoles.bicep' = {
     storageAccountObject                                : storageAccountObject    
     principalId                                         : identityModule.outputs.principalId    
   }
-  dependsOn                                             : [registryContainerModule, storageAccountModule, createServiceBusNamespaceAndQueuesModule]
+  dependsOn                                             : [registryContainerModule]
 }
 
 module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnvironment.bicep' = {
@@ -108,7 +108,7 @@ module createDockerContainerEnvionmentModule 'DockerEnvironment/CreateManagedEnv
 
 module assignServiceBusRoleModule 'AssignRoles/AssignServiceBusDataOwnerTo.bicep' = {
     name                                                : 'AssignServiceBusRoles'
-    scope                                               : resourceGroup(serviceBusNamespaceObject.resourceGroup)
+    scope                                               : resourceGroup(serviceBusNamespaceObject.subscriptionId, serviceBusNamespaceObject.resourceGroup)
     params : {
         serviceBusObject                                : serviceBusNamespaceObject
         principalId                                     : identityModule.outputs.principalId        
@@ -119,7 +119,7 @@ module assignServiceBusRoleModule 'AssignRoles/AssignServiceBusDataOwnerTo.bicep
 
 module appConfigurationModule 'AssignRoles/AssignContainerReaderToAppConfig.bicep' = {
   name                                                  : 'appConfigurationModule'
-  scope                                                 : resourceGroup(appConfigurationObject.resourceGroup)
+  scope                                                 : resourceGroup(appConfigurationObject.subscriptionId, appConfigurationObject.resourceGroup)
   params: {
     appConfigurationObject                              : appConfigurationObject
     principalId                                         : identityModule.outputs.principalId
@@ -130,7 +130,7 @@ module appConfigurationModule 'AssignRoles/AssignContainerReaderToAppConfig.bice
 
 module keyVaultModule  'AssignRoles/AssignKeyVaultReaderRoleToIdentity.bicep' ={
     name                                                : 'AssignIdentityToKeyVaultModule'
-    scope                                               : resourceGroup(keyVaultObject.resourceGroup)
+    scope                                               : resourceGroup(keyVaultObject.SubscriptionId, keyVaultObject.resourceGroup)
     params: {
         keyVaultObject                                  : keyVaultObject
         principalId                                     : identityModule.outputs.principalId

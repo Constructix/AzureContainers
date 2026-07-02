@@ -1,6 +1,6 @@
 @QEMS.SampleWebApi.Demo_HostAddress = http://localhost:5014
 
-GET {{QEMS.SampleWebApi.Demo_HostAddress}}/weatherforecast/
+GET {{QEMS.SampleWebApi.Demo_HostAddress}}/api/weatherforecast/
 Accept: application/json
 
 ###

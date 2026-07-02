@@ -6,11 +6,21 @@
 	  <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	  <!-- Build-time OpenAPI generation -->
+	  <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
+	  <OpenApiDocumentsDirectory>$(MSBuildProjectDirectory)</OpenApiDocumentsDirectory>
+	  <!-- optional: fixed filename instead of {ProjectName}.json -->
+	  <OpenApiGenerateDocumentsOptions>--file-name openapi</OpenApiGenerateDocumentsOptions>
   </PropertyGroup>
  
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.9" />
     <PackageReference Include="Microsoft.OpenApi" Version="2.9.0" />
+	  <!-- This is the package that actually does the build-time generation -->
+	  <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	  </PackageReference>
   </ItemGroup>
 	<ItemGroup>
 		<OpenApiDocument Include="v1">
