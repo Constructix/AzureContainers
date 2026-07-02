@@ -14,7 +14,7 @@ variables:
   outputCodeFolder:  'webApi/src/QEMS.SampleWebApi.Demo/**'
   outputBicepFolder: 'webApi/deployment/Bicep/**'
   outputOpenAPIFolder: 'api/openapi.json'
-  DOTNETVERSION: '10.x'
+  #DOTNETVERSION: '10.x'
   imageTag: '$(Build.SourceVersion)'
 stages:
 - stage: Build_And_Package
