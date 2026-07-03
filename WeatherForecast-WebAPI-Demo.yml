@@ -82,8 +82,8 @@ stages:
       variables:
         AzureSubscription : 'constructixDevSvcConn'
         DevResourceGroup : 'rg-ems-elector-ae-dev'
-        ContainerRepository : 'crelectordevae'        
-        ImageRepositoryName : 'electorservicesrepository'
+        ContainerRepository : 'creqemselectordev'        
+        ImageRepositoryName : 'rpqemselectordev'
         DeployEnv : 'dev'
       strategy:
        runOnce:
