@@ -51,7 +51,7 @@ var storageAccountResourceGroup                         = containerAppResourcegr
 var storageAccountName                                  = 'stqemsaudev'
 
 var serviceBusNamespaceResourceGroupName                = 'rg-shared-ems-dev-ae'
-var serviceBusNameSpace                                 = 'sbns-qems-electors-dev'
+var serviceBusNameSpace                                 = 'sbns-constructix-electors-dev'
 
 var appConfigurationResourceGroupName                   = 'rg-constructix-dev-ae-01'
 var appConfigName                                       = 'apconfig-constructix-ae-dev-01'                 
