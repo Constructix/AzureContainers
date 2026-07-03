@@ -48,7 +48,7 @@ var monitoringResourceGroupName                         = 'rg-monitoring-ems-dev
 var appInsightsName                                     = 'appiemscommondevae'
 var workspaceName                                        = 'logemscommondevae'
 var storageAccountResourceGroup                         = containerAppResourcegroup
-var storageAccountName                                  = 'stqemsdev'
+var storageAccountName                                  = 'stqemsaudev'
 
 var serviceBusNamespaceResourceGroupName                = 'rg-shared-ems-dev-ae'
 var serviceBusNameSpace                                 = 'sbns-qems-electors-dev'
