@@ -1,27 +1,30 @@
 // create storage account 
 using 'CreateContainer.bicep'
 
+var resourceGroup                                       = 'rg-qems-dev-conn-sandbox'
+var monitoringResourceGroupName                         = 'rg-qems-dev-monitor'
+var appConfigurationResourceGroupName                   = 'rg-qems-hub-ae-sandbox'
 var managedIdentityName                                 = 'electorcontainerappidentity01'
 param latestImageTag                                    = ''
 
 param appInsightsObject = {
   name                                                  : 'appiemscommondevae' 
-  resourceGroup                                         : 'rg-monitoring-ems-dev-ae'
+  resourceGroup                                         : monitoringResourceGroupName
 }
 
 param containerAppsEnvironment = {
   name                                                  : 'caeelectordevae'
-  resourceGroup                                         : 'rg-ems-elector-ae-dev'
+  resourceGroup                                         : resourceGroup
 }
 
 param managedIdentityObject = {
   name                                                  : managedIdentityName
-  resourceGroup                                         : 'rg-ems-elector-ae-dev'
+  resourceGroup                                         : resourceGroup
 }
 
 param containerApp = {
   name                                                  : 'caelectordevae'
-  resourceGroup                                         : 'rg-ems-elector-ae-dev'
+  resourceGroup                                         : resourceGroup
   scale: {
 	 minReplicas                                        : 1
      maxReplicas                                        : 10
@@ -30,10 +33,7 @@ param containerApp = {
   }
 }
 
-param storageAccountObject = {
-  name                                                  : 'stelectoraedev' 
-  resourceGroup                                         : 'rg-ems-elector-ae-dev'
-}
+
 param registryContainerObject = {
   name                                                  : 'crelectordevae'
   repositoryName                                        : 'electorservicesrepository'
@@ -42,6 +42,6 @@ param registryContainerObject = {
 
 param appConfigurationObject = {
   name                                                  : 'apconfig-constructix-ae-dev-01'
-  resourceGroup                                         : 'rg-constructix-dev-ae-01'  
+  resourceGroup                                         : appConfigurationResourceGroupName 
 }
 

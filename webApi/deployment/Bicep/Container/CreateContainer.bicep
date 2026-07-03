@@ -3,7 +3,7 @@ param appInsightsObject object
 param containerAppsEnvironment object
 param managedIdentityObject object
 param containerApp object
-param storageAccountObject object
+
 param registryContainerObject object
 param appConfigurationObject object
 
@@ -22,10 +22,7 @@ resource dockerContainerAppEnvironmentModule 'Microsoft.App/managedEnvironments@
   scope                                                 : resourceGroup(containerAppsEnvironment.resourceGroup)
 }
 
-resource storageAccountResource 'Microsoft.Storage/storageAccounts@2025-06-01' existing = {
-  name                                                  : storageAccountObject.name
-  scope                                                 : resourceGroup(storageAccountObject.resourceGroup)
-}
+
 resource userAssignedManagedIdentityResource 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' existing = {
   name                                                  : managedIdentityObject.name
   scope                                                 : resourceGroup(managedIdentityObject.resourceGroup)
@@ -81,23 +78,11 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
           imageType                                     : 'ContainerImage'
           name                                          : containerApp.name
           env: [
-            // {
-            //   name                                      : 'FUNCTIONS_WORKER_RUNTIME'
-            //   value                                     : 'dotnet-isolated'
-            // }
-            // {
-            //   name                                      : 'AzureWebJobsStorage__accountName'
-            //   value                                     : storageAccountObject.name
-            // }
-            // {
-            //   name                                      : 'AzureWebJobsStorage__credential'
-            //   value                                     : 'managedidentity'
-            // }
+            
             {
               name                                      : 'AZURE_CLIENT_ID'
               value                                     : userAssignedManagedIdentityResource.properties.clientId //userAssignedIdentityClientId
-            }
-            /* Added 2260701 */
+            }            
             {
                 name                                    : 'ASPNETCORE_ENVIRONMENT'
                 value                                   : 'Production'  // or per-environment via bicepparam
@@ -106,67 +91,22 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
                 name                                    : 'ASPNETCORE_URLS'
                 value                                   : 'http://+:8080'  // must match Dockerfile EXPOSE + Container App ingress targetPort
             }
-            /* End Added 2260701*/
-            // {
-            //   name                                      : 'WEBSITE_SITE_NAME'
-            //   value                                     : containerApp.name
-            // }
-            // {
-            //   name                                      : 'WEBSITE_HOSTNAME'
-            //   value                                     : containerApp.name
-            // }
-            // {
-            //   name                                      : 'WEBSITE_INSTANCE_ID'
-            //   value                                     : containerApp.name
-            // }
+          
             {
               name                                         : 'APPLICATIONINSIGHTS_CONNECTION_STRING'
               value                                        : appInsightsResource.properties.ConnectionString
             }
-            // {
-            //   name                                      : 'AzureWebJobsStorage__clientId' // only needed for user-assigned
-            //   value                                     : userAssignedManagedIdentityResource.id
-            // }
-            // {
-            //   name                                      : 'AzureWebJobsStorage__blobServiceUri'
-            //   value                                     : storageAccountResource.properties.primaryEndpoints.blob
-            // }
-            // {
-            //   name                                      : 'AzureWebJobsStorage__queueServiceUri'
-            //   value                                     : storageAccountResource.properties.primaryEndpoints.queue
-            // }
-            // {
-            //   name                                      : 'AzureWebJobsStorage__tableServiceUri'
-            //   value                                     : storageAccountResource.properties.primaryEndpoints.table
-            // }
-            // {
-            //   name                                      : 'AzureWebJobsStorage__fileServiceUri'
-            //   value                                     : storageAccountResource.properties.primaryEndpoints.file
-            // }
+           
             {
               name                                      : 'AppConfig'
               value                                     : appConfigResource.properties.endpoint
             }
-            // {
-            //   name                                      : 'WEBSITE_USE_PLACEHOLDER_DOTNETISOLATED'
-            //       value                                 : '1'
-            // }
-            // {
-            //     name                                    : 'AzureWebJobsScriptRoot'
-            //     value                                   : '/home/site/wwwroot'
-            //}
+           
             {
                 name                                    : 'DOTNET_RUNNING_IN_CONTAINER'
                 value                                   : 'true'
             }
-            // {
-            //     name                                    : 'FUNCTIONS_WORKER_RUNTIME_VERSION'
-            //     value                                   : '10.0'        // match your .NET 10 image
-            // }
-            // {
-            //     name                                    : 'AzureFunctionsJobHost__Logging__Console__IsEnabled'
-            //     value                                   : 'true'
-            // }
+           
           ]
           resources: {
             cpu                                         : json('0.5')
