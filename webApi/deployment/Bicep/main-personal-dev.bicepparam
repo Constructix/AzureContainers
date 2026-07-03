@@ -46,7 +46,7 @@ var monitoringSubscriptionId                            = 'fa7941a8-d614-416c-8b
 var monitoringResourceGroupName                         = 'rg-monitoring-ems-dev-ae'
 
 var appInsightsName                                     = 'appiemscommondevae'
-
+var workspaceName                                        = 'logemscommondevae'
 var storageAccountResourceGroup                         = containerAppResourcegroup
 var storageAccountName                                  = 'stqemsdev'
 
@@ -104,15 +104,15 @@ var keyVaultSecretuserRole RoleValues = {
 }
 
 param workspaceObject = {
-  name                                                  : appInsightsName
+  name                                                  : workspaceName
   subscriptionId                                        : monitoringSubscriptionId
   resourceGroup                                         : monitoringResourceGroupName
-  location                                              : appInsightsName
+  location                                              : location
   sku                                                   : 'pergb2018'
   tags                                                  : tags
 }
 param appInsightsObject = {
-  name                                                  : 'appiemscommondevae'
+  name                                                  : appInsightsName
   subscriptionId                                        : monitoringSubscriptionId 
   resourceGroup                                         : monitoringResourceGroupName
   kind                                                  : 'web'
