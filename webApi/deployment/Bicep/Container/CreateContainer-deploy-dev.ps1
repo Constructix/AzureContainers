@@ -14,5 +14,5 @@ Write-Host "Latest Tag:$latestTag"
 az deployment group create `
   --name DeployContainerApp `
   --resource-group $ResourceGroup `
-  --template-file CreateContainer.bicep `
-  --parameters createContainer-personal-$Environment.bicepparam latestImageTag=$latestTag
+  --template-file CreateContainer-personal.bicep `
+  --parameters createContainer-personal-$Environment-dev.bicepparam latestImageTag=$latestTag
