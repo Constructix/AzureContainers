@@ -15,4 +15,4 @@ az deployment group create `
   --name DeployContainerApp `
   --resource-group $ResourceGroup `
   --template-file CreateContainer-personal.bicep `
-  --parameters createContainer-personal-$Environment-dev.bicepparam latestImageTag=$latestTag
+  --parameters createContainer-personal-$Environment.bicepparam latestImageTag=$latestTag
