@@ -39,14 +39,14 @@ var tags TagValues = {
 var location                                            = 'australiaeast'
 var containerAppSubscriptionId                          = 'fa7941a8-d614-416c-8bae-6e4a36930017' 
 var containerAppResourcegroup                           = 'rg-ems-elector-ae-dev'
-var containerAppEnvironment                             = 'caeelectordevae'
+
 var containerAppName                                    = 'caelectordevae'
 
 var monitoringSubscriptionId                            = 'fa7941a8-d614-416c-8bae-6e4a36930017' 
 var monitoringResourceGroupName                         = 'rg-monitoring-ems-dev-ae'
 
 var appInsightsName                                     = 'appiemscommondevae'
-var workspaceName                                        = 'logemscommondevae'
+var workspaceName                                       = 'logemscommondevae'
 var storageAccountResourceGroup                         = containerAppResourcegroup
 var storageAccountName                                  = 'stqemsaudev'
 
