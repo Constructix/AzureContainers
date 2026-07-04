@@ -82,7 +82,7 @@ stages:
       variables:
         AzureSubscription : 'constructixDevSvcConn'
         DevResourceGroup : 'rg-ems-elector-ae-dev'
-        ContainerRepository : 'creqemselectordev'        
+        ContainerRegistry : 'creqemselectordev'        
         ImageRepositoryName : 'rpqemselectordev'
         DeployEnv : 'dev'
       strategy:
@@ -106,7 +106,7 @@ stages:
                 targetType: inline
                 script: |
                   Write-Host "DevResourceGroup=$(DevResourceGroup)"
-                  Write-Host "ContainerRepository=$(ContainerRepository)"
+                  Write-Host "ContainerRegistry=$(ContainerRegistry)"
                   Write-Host "DeployEnv=$(DeployEnv)"
                   Write-Host "ImageRepositoryName=$(ImageRepositoryName)"
             - task: AzureCLI@2
@@ -127,8 +127,8 @@ stages:
                 scriptType: bash
                 scriptLocation: inlineScript
                 inlineScript: |
-                  az acr login --name 'crelectordevae'
-                  IMAGE='$(ContainerRepository).azurecr.io/$(ImageRepositoryName):$(imageTag)'
+                  az acr login --name $(ContainerRegistry)
+                  IMAGE='$(ContainerRegistry).azurecr.io/$(ImageRepositoryName):$(imageTag)'
                   docker build \
                     --no-cache \
                     -f $(Pipeline.Workspace)/drop/webApi/src/QEMS.SampleWebApi.Demo/Dockerfile \
@@ -143,4 +143,4 @@ stages:
                 scriptLocation: scriptPath
                 scriptPath: '$(Pipeline.Workspace)/drop/webApi/deployment/Bicep/Container/CreateContainer-deploy-$(DeployEnv).ps1'
                 workingDirectory: '$(Pipeline.Workspace)/drop/webApi/deployment/Bicep/Container/'
-                arguments: -ResourceGroup $(DevResourceGroup) -ContainerRegistry $(ContainerRepository) -RepositoryName $(ImageRepositoryName) -Environment $(DeployEnv) 
+                arguments: -ResourceGroup $(DevResourceGroup) -ContainerRegistry $(ContainerRegistry) -RepositoryName $(ImageRepositoryName) -Environment $(DeployEnv) 
