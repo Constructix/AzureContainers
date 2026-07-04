@@ -1,5 +1,5 @@
 // create storage account 
-using 'CreateContainer.bicep'
+using 'CreateContainer-personal.bicep'
 
 var resourceGroup                                       = 'rg-ems-elector-ae-dev'
 var monitoringResourceGroupName                         = 'rg-monitoring-ems-dev-ae'
