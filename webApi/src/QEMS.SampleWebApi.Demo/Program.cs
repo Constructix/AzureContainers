@@ -1,22 +1,25 @@
+using QEMS.SampleWebApi.Demo.Transformers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddScoped<IMessageWriter, LoggingMessageWriter>();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi(options=>
+
+builder.Services.AddOpenApi(options =>
 {
-   // options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1;
-    
-        options.AddDocumentTransformer((document, context, ct) =>
-        {
-            document.Info.Title = "My API";
+    options.AddSchemaTransformer<IntIsNoStringSchemaTransformer>();
+    options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
+
+    options.AddDocumentTransformer((document, context, ct) =>
+{
+            document.Info.Title = "WeatherForecast API";
             document.Info.Version = "1.0";
             return Task.CompletedTask;
         });
-    
-});
 
+});
 var app = builder.Build();
 app.UseMyCustomMiddleWare();
 // Configure the HTTP request pipeline.

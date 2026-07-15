@@ -9,8 +9,12 @@
 	  <!-- Build-time OpenAPI generation -->
 	  <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
 	  <OpenApiDocumentsDirectory>$(MSBuildProjectDirectory)</OpenApiDocumentsDirectory>
+	  <!-- Force OpenAPI 3.0 -->
+	  <OpenApiDocumentVersion>3.0.0</OpenApiDocumentVersion>
+	  <OpenApiSchemaVersion>OpenApi3_0</OpenApiSchemaVersion>
 	  <!-- optional: fixed filename instead of {ProjectName}.json -->
 	  <OpenApiGenerateDocumentsOptions>--file-name openapi</OpenApiGenerateDocumentsOptions>
+	  <OpenApiGenerateDocumentsOnBuild>true</OpenApiGenerateDocumentsOnBuild>
   </PropertyGroup>
  
   <ItemGroup>

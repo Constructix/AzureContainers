@@ -49,7 +49,7 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
     environmentId                                       : dockerContainerAppEnvironmentModule.id
     workloadProfileName                                 : 'Consumption'
     configuration: {
-      activeRevisionsMode                               : 'Single'
+      activeRevisionsMode                               : 'Multiple'
       ingress: {
         external                                        : true
         targetPort                                      : 8080
@@ -93,8 +93,8 @@ resource containerAppResource 'Microsoft.App/containerApps@2025-10-02-preview' =
             }
           
             {
-              name                                         : 'APPLICATIONINSIGHTS_CONNECTION_STRING'
-              value                                        : appInsightsResource.properties.ConnectionString
+              name                                      : 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+              value                                     : appInsightsResource.properties.ConnectionString
             }
            
             {
