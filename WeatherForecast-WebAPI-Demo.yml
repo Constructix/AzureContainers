@@ -5,6 +5,7 @@ trigger:
   paths:
     include: 
       - AzureContainers/webApi/**
+      - AzureContainers/workflows/webAPI-demo.yml
 pool:
   vmImage: ubuntu-latest
 variables:
