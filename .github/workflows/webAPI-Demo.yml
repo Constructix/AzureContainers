@@ -34,7 +34,7 @@ stages:
             includePreviewVersions: true        
         
         - task: DotNetCoreCLI@2
-          displayName: 'Build WebApiProject'
+          displayName: 'Build Solution'
           inputs:
             command               : 'build'
             projects              : '$(webApiProject)' 
