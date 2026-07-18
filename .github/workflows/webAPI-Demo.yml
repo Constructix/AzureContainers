@@ -11,13 +11,13 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  webApiProject         : 'AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/QEMS.SampleWebApi.Demo.csproj'
-  testWebApiProject     : 'AzureContainers/webApi/tests/Ems.Api.Data.Respository.Tests/Ems.Api.Data.Respository.Tests.csproj'
-  outputCodeFolder      : 'AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/**'
-  outputBicepFolder     : 'AzureContainers/webApi/deployment/Bicep/**'
-  outputOpenApiFolder   : 'AzureContainers/api/openapi.json'
-  dotnetVersion         : '10.x'
-  imageTag              : '$(Build.SourceVersion)'
+  webApiProject : 'AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/QEMS.SampleWebApi.Demo.csproj'
+  testWebApiProject : 'AzureContainers/webApi/tests/Ems.Api.Data.Respository.Tests/Ems.Api.Data.Respository.Tests.csproj'
+  outputCodeFolder : 'AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/**'
+  outputBicepFolder : 'AzureContainers/webApi/deployment/Bicep/**'
+  outputOpenApiFolder : 'AzureContainers/api/openapi.json'
+  dotnetVersion: '10.x'
+  imageTag : '$(Build.SourceVersion)'
 
 stages:
 - stage: Build_And_Package
