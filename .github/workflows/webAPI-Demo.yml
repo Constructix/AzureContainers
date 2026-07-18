@@ -23,8 +23,6 @@ stages:
   jobs:
     - job: Build_and_Package
       displayName: Build
-      pool:
-       vmImage: 'ubuntu-latest'
       steps:
         - task: UseDotNet@2
           displayName: 'Install .NET 10'
