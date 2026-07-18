@@ -11,7 +11,8 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  webApiProject : 'AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/QEMS.SampleWebApi.Demo.csproj'
+  projectName   : 'QEMS.SampleWebApi.Demo'
+  webApiProject : 'AzureContainers/webApi/src/$(projectName)/$(projectName).csproj'
   testWebApiProject : 'AzureContainers/webApi/tests/Ems.Api.Data.Respository.Tests/Ems.Api.Data.Respository.Tests.csproj'
   outputCodeFolder : 'AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/**'
   outputBicepFolder : 'AzureContainers/webApi/deployment/Bicep/**'
