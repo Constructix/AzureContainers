@@ -9,8 +9,7 @@ trigger:
 
 pool:
   vmImage: ubuntu-latest
-variables:
-  vmImageName: 'ubuntu-latest'
+variables: 
   # Added 'AzureContainers/' prefix to align with your trigger configuration
   webApiProject         : 'AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/QEMS.SampleWebApi.Demo.csproj'
   testWebApiProject     : 'AzureContainers/webApi/tests/Ems.Api.Data.Respository.Tests/Ems.Api.Data.Respository.Tests.csproj'
