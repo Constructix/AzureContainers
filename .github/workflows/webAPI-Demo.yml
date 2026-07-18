@@ -54,7 +54,7 @@ stages:
             testResultsFormat     : 'VSTest'
             testResultsFiles      : '$(Agent.TempDirectory)/TestResults/*.trx'
         
-        - task: PublishCodeCoverageResults@3
+        - task: PublishCodeCoverageResults@2
           displayName: 'Publish Code Coverage'
           inputs:         
             summaryFileLocation   : '$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml'
