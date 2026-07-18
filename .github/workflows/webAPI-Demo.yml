@@ -9,14 +9,14 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 variables:
-  VmImageName : 'ubuntu-latest'
-  Solution    : 'webApi/src/QEMS.SampleWebApi.Demo/QEMS.SampleWebApi.Demo.csproj'
-  testProject : 'webApi/tests/Ems.Api.Data.Respository.Tests/Ems.Api.Data.Respository.Tests.csproj'
-  outputCodeFolder:  'webApi/src/QEMS.SampleWebApi.Demo/**'
-  outputBicepFolder: 'webApi/deployment/Bicep/**'
-  outputOpenAPIFolder: 'api/openapi.json'
-  DOTNETVERSION: '10.x'
-  imageTag: '$(Build.SourceVersion)'
+  VmImageName         : 'ubuntu-latest'
+  WebApiProject       : 'webApi/src/QEMS.SampleWebApi.Demo/QEMS.SampleWebApi.Demo.csproj'
+  testWebApiProject         : 'webApi/tests/Ems.Api.Data.Respository.Tests/Ems.Api.Data.Respository.Tests.csproj'
+  outputCodeFolder    : 'webApi/src/QEMS.SampleWebApi.Demo/**'
+  outputBicepFolder   : 'webApi/deployment/Bicep/**'
+  outputOpenAPIFolder : 'api/openapi.json'
+  DOTNETVERSION       : '10.x'
+  imageTag            : '$(Build.SourceVersion)'
 stages:
 - stage: Build_And_Package
   displayName: 'Build & Package Container Code'
@@ -32,16 +32,16 @@ stages:
             version: '$(DOTNETVERSION)'
             includePreviewVersions: true        
         - task: DotNetCoreCLI@2
-          displayName: 'Build Solution'
+          displayName: 'Build WebApiProject'
           inputs:
            command: 'build'
-           projects: '$(Solution)' 
+           projects: '$(WebApiProject)' 
            arguments: '--configuration Release' 
         - task: DotNetCoreCLI@2
           displayName: 'Run Tests with coverage'
           inputs:
             command: test
-            projects: '$(testProject)'
+            projects: '$(testWebApiProject)'
             arguments: '--collect:"XPlat Code Coverage" --logger trx --results-directory $(Agent.TempDirectory)/TestResults'
             publishTestResults: false # need to be set to false as there are 2 arguments. 
         - task: PublishTestResults@2
