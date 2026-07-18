@@ -7,147 +7,149 @@ trigger:
       - AzureContainers/webApi/src/**     
       - AzureContainers/webApi/tests/**
 
-  pool:
-    vmImage: ubuntu-latest
-  variables: 
-    # Added 'AzureContainers/' prefix to align with your trigger configuration
-    webApiProject         : 'AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/QEMS.SampleWebApi.Demo.csproj'
-    testWebApiProject     : 'AzureContainers/webApi/tests/Ems.Api.Data.Respository.Tests/Ems.Api.Data.Respository.Tests.csproj'
-    outputCodeFolder      : 'AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/**'
-    outputBicepFolder     : 'AzureContainers/webApi/deployment/Bicep/**'
-    outputOpenApiFolder   : 'AzureContainers/api/openapi.json'
-    dotnetVersion         : '10.x'
-    imageTag              : '$(Build.SourceVersion)'
+pool:
+  vmImage: ubuntu-latest
 
-  stages:
-  - stage: Build_And_Package
-    displayName: 'Build & Package Container Code'
-    jobs:
-      - job: Build_and_Package
-        displayName: Build
-        steps:
-          - task: UseDotNet@2
-            displayName: 'Install .NET 10'
-            inputs:
-              version               : '$(dotnetVersion)'
-              includePreviewVersions: true        
-        
-          - task: DotNetCoreCLI@2
-            displayName: 'Build Solution'
-            inputs:
-              command               : 'build'
-              projects              : '$(webApiProject)' 
-              arguments             : '--configuration Release' 
-        
-          - task: DotNetCoreCLI@2
-            displayName: 'Run Tests with coverage'
-            inputs:
-              command               : test
-              projects              : '$(testWebApiProject)'
-              arguments             : '--collect:"XPlat Code Coverage" --logger trx --results-directory $(Agent.TempDirectory)/TestResults'
-              publishTestResults    : false # Set to false because we explicitly publish via PublishTestResults@2
-        
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Run Metrics'
-            inputs:
-              testResultsFormat     : 'VSTest'
-              testResultsFiles      : '$(Agent.TempDirectory)/TestResults/*.trx'
-        
-          - task: PublishCodeCoverageResults@2
-            displayName: 'Publish Code Coverage'
-            inputs:         
-              summaryFileLocation   : '$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml'
-              pathToSources         : '$(Build.SourcesDirectory)'     
-        
-          - task: CopyFiles@2
-            displayName: 'Copy Bicep and Source files'
-            inputs:
-              sourceFolder          : '$(System.DefaultWorkingDirectory)'
-              contents: |
-                $(outputBicepFolder)
-                $(outputCodeFolder)
-                $(outputOpenApiFolder)
-              TargetFolder          : '$(Build.ArtifactStagingDirectory)'                
-          - task: PublishBuildArtifacts@1
-            displayName             : 'Publishing Artifacts'
-            inputs:
-              pathtoPublish         : '$(Build.ArtifactStagingDirectory)'
-              ArtifactName          : 'drop'
-              publishLocation       : 'container'
+variables:
+  webApiProject         : 'AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/QEMS.SampleWebApi.Demo.csproj'
+  testWebApiProject     : 'AzureContainers/webApi/tests/Ems.Api.Data.Respository.Tests/Ems.Api.Data.Respository.Tests.csproj'
+  outputCodeFolder      : 'AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/**'
+  outputBicepFolder     : 'AzureContainers/webApi/deployment/Bicep/**'
+  outputOpenApiFolder   : 'AzureContainers/api/openapi.json'
+  dotnetVersion         : '10.x'
+  imageTag              : '$(Build.SourceVersion)'
 
-  - stage: Deploy_To_Dev
-    displayName: 'Deploy to Dev Environment'
-    dependsOn: Build_And_Package
-    jobs:
-      - deployment: ProvisionAzureResources
-        displayName: 'Provision Azure Resources'
-        environment: 'DEV'      
-        variables:
-          azureSubscription: 'constructixDevSvcConn'
-          devResourceGroup: 'rg-ems-elector-ae-dev'
-          containerRegistry: 'creqemselectordev'        
-          imageRepositoryName: 'rpqemselectordev'
-          deployEnv: 'dev'
-        strategy:
-          runOnce:
-            deploy:
-              steps:
-                - task: PowerShell@2
-                  displayName: 'Log Build Number'
-                  inputs:
-                    targetType: inline
-                    script: |
-                      Write-Host "CurrentBuild Id: $(Build.BuildNumber)"
+stages:
+- stage: Build_And_Package
+  displayName: 'Build & Package Container Code'
+  jobs:
+    - job: Build_and_Package
+      displayName: Build
+      steps:
+        - task: UseDotNet@2
+          displayName: 'Install .NET 10'
+          inputs:
+            version               : '$(dotnetVersion)'
+            includePreviewVersions: true        
+        
+        - task: DotNetCoreCLI@2
+          displayName: 'Build Solution'
+          inputs:
+            command               : 'build'
+            projects              : '$(webApiProject)' 
+            arguments             : '--configuration Release' 
+        
+        - task: DotNetCoreCLI@2
+          displayName: 'Run Tests with coverage'
+          inputs:
+            command               : test
+            projects              : '$(testWebApiProject)'
+            arguments             : '--collect:"XPlat Code Coverage" --logger trx --results-directory $(Agent.TempDirectory)/TestResults'
+            publishTestResults    : false
+        
+        - task: PublishTestResults@2
+          displayName: 'Publish Test Run Metrics'
+          inputs:
+            testResultsFormat     : 'VSTest'
+            testResultsFiles      : '$(Agent.TempDirectory)/TestResults/*.trx'
+        
+        - task: PublishCodeCoverageResults@2
+          displayName: 'Publish Code Coverage'
+          inputs:         
+            summaryFileLocation   : '$(Agent.TempDirectory)/TestResults/**/coverage.cobertura.xml'
+            pathToSources         : '$(Build.SourcesDirectory)'     
+        
+        - task: CopyFiles@2
+          displayName: 'Copy Bicep and Source files'
+          inputs:
+            sourceFolder          : '$(System.DefaultWorkingDirectory)'
+            contents: |
+              $(outputBicepFolder)
+              $(outputCodeFolder)
+              $(outputOpenApiFolder)
+            TargetFolder          : '$(Build.ArtifactStagingDirectory)'                
+
+        - task: PublishBuildArtifacts@1
+          displayName             : 'Publishing Artifacts'
+          inputs:
+            pathtoPublish         : '$(Build.ArtifactStagingDirectory)'
+            ArtifactName          : 'drop'
+            publishLocation       : 'container'
+
+- stage: Deploy_To_Dev
+  displayName: 'Deploy to Dev Environment'
+  dependsOn: Build_And_Package
+  jobs:
+    - deployment: ProvisionAzureResources
+      displayName: 'Provision Azure Resources'
+      environment: 'DEV'
+      variables:
+        azureSubscription: 'constructixDevSvcConn'
+        devResourceGroup: 'rg-ems-elector-ae-dev'
+        containerRegistry: 'creqemselectordev'
+        imageRepositoryName: 'rpqemselectordev'
+        deployEnv: 'dev'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+              - task: PowerShell@2
+                displayName: 'Log Build Number'
+                inputs:
+                  targetType: inline
+                  script: |
+                    Write-Host "CurrentBuild Id: $(Build.BuildNumber)"
               
-                - task: DownloadPipelineArtifact@2
-                  displayName: 'Downloading build artifacts'
-                  inputs:
-                    buildType: current
-                    artifactName: 'drop'
-                    targetPath: '$(Pipeline.Workspace)'
-                - task: PowerShell@2
-                  displayName: 'Debug variables'
-                  inputs:
-                    targetType: inline
-                    script: |
-                      Write-Host "DevResourceGroup=$(devResourceGroup)"
-                      Write-Host "ContainerRegistry=$(containerRegistry)"
-                      Write-Host "DeployEnv=$(deployEnv)"
-                      Write-Host "ImageRepositoryName=$(imageRepositoryName)"              
-                - task: AzureCLI@2
-                  displayName: 'Provisioning Azure Resources'
-                  inputs:
-                    azureSubscription: 'constructixDevSvcConn'
-                    scriptType: pscore
-                    scriptLocation: scriptPath
-                    scriptPath: '$(Pipeline.Workspace)/drop/AzureContainers/webApi/deployment/Bicep/Deploy.ps1'
-                    workingDirectory: '$(Pipeline.Workspace)/drop/AzureContainers/webApi/deployment/Bicep'
-                    arguments: -ResourceGroup $(devResourceGroup) -DeploymentEnv $(deployEnv)
-                    addSpnToEnvironment: true                              
-                - task: AzureCLI@2
-                  displayName: 'Build and Push Image to Container Registry'
-                  inputs:
-                    azureSubscription: 'constructixDevSvcConn'
-                    scriptType: bash
-                    scriptLocation: inlineScript
-                    inlineScript: |
-                      az acr login --name $(containerRegistry)
-                      IMAGE='$(containerRegistry).azurecr.io/$(imageRepositoryName):$(imageTag)'                    
-                      # Target workspace root folder for Docker build context if your Dockerfile uses relative files out of project root
-                      docker build \
-                        --no-cache \
-                        -f $(Pipeline.Workspace)/drop/AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/Dockerfile \
-                        -t $IMAGE \
-                        $(Pipeline.Workspace)/drop/AzureContainers/
-                    
-                      docker push $IMAGE
-              
-                - task: AzureCLI@2
-                  displayName: 'Deploy Container App with Latest Image'
-                  inputs:
-                    azureSubscription : 'constructixDevSvcConn'
-                    scriptType        : pscore
-                    scriptLocation    : scriptPath
-                    scriptPath        : '$(Pipeline.Workspace)/drop/AzureContainers/webApi/deployment/Bicep/Container/CreateContainer-deploy-$(deployEnv).ps1'
-                    workingDirectory  : '$(Pipeline.Workspace)/drop/AzureContainers/webApi/deployment/Bicep/Container/'
-                    arguments         : -ResourceGroup $(devResourceGroup) -ContainerRegistry $(containerRegistry) -RepositoryName $(imageRepositoryName) -Environment $(deployEnv)
+              - task: DownloadPipelineArtifact@2
+                displayName: 'Downloading build artifacts'
+                inputs:
+                  buildType: current
+                  artifactName: 'drop'
+                  targetPath: '$(Pipeline.Workspace)'
+
+              - task: PowerShell@2
+                displayName: 'Debug variables'
+                inputs:
+                  targetType: inline
+                  script: |
+                    Write-Host "DevResourceGroup=$(devResourceGroup)"
+                    Write-Host "ContainerRegistry=$(containerRegistry)"
+                    Write-Host "DeployEnv=$(deployEnv)"
+                    Write-Host "ImageRepositoryName=$(imageRepositoryName)"
+
+              - task: AzureCLI@2
+                displayName: 'Provisioning Azure Resources'
+                inputs:
+                  azureSubscription: 'constructixDevSvcConn'
+                  scriptType: pscore
+                  scriptLocation: scriptPath
+                  scriptPath: '$(Pipeline.Workspace)/drop/AzureContainers/webApi/deployment/Bicep/Deploy.ps1'
+                  workingDirectory: '$(Pipeline.Workspace)/drop/AzureContainers/webApi/deployment/Bicep'
+                  arguments: -ResourceGroup $(devResourceGroup) -DeploymentEnv $(deployEnv)
+                  addSpnToEnvironment: true
+
+              - task: AzureCLI@2
+                displayName: 'Build and Push Image to Container Registry'
+                inputs:
+                  azureSubscription: 'constructixDevSvcConn'
+                  scriptType: bash
+                  scriptLocation: inlineScript
+                  inlineScript: |
+                    az acr login --name $(containerRegistry)
+                    IMAGE='$(containerRegistry).azurecr.io/$(imageRepositoryName):$(imageTag)'                    
+                    docker build \
+                      --no-cache \
+                      -f $(Pipeline.Workspace)/drop/AzureContainers/webApi/src/QEMS.SampleWebApi.Demo/Dockerfile \
+                      -t $IMAGE \
+                      $(Pipeline.Workspace)/drop/AzureContainers/
+                    docker push $IMAGE
+
+              - task: AzureCLI@2
+                displayName: 'Deploy Container App with Latest Image'
+                inputs:
+                  azureSubscription : 'constructixDevSvcConn'
+                  scriptType        : pscore
+                  scriptLocation    : scriptPath
+                  scriptPath        : '$(Pipeline.Workspace)/drop/AzureContainers/webApi/deployment/Bicep/Container/CreateContainer-deploy-$(deployEnv).ps1'
+                  workingDirectory  : '$(Pipeline.Workspace)/drop/AzureContainers/webApi/deployment/Bicep/Container/'
+                  arguments         : -ResourceGroup $(devResourceGroup) -ContainerRegistry $(containerRegistry) -RepositoryName $(imageRepositoryName) -Environment $(deployEnv)
